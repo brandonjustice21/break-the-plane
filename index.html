@@ -322,18 +322,20 @@ var BOOK_URL = {
   'Fanatics': 'https://sportsbook.fanatics.com',
   'Caesars': 'https://www.caesars.com/sportsbook'
 };
-// Real sportsbook logo marks (Sept 9, 2026) -- one square icon per book,
-// filed alongside index.html and referenced by relative path so the single
-// HTML file doesn't have to carry 12 images as base64. Keyed by the exact
-// same book-name strings as BOOK_URL. Deliberately NOT every BOOK_URL key --
-// BetRivers and bet365 have no logo asset yet, so bookLogoImg() below just
-// renders nothing for them (falls back to the plain-text book name, same
-// safe-degrade pattern as newsHtml()'s missing-headline fallback).
+// Real sportsbook logo marks (Sept 9, 2026; BetRivers/bet365 added Sept 9,
+// 2026) -- one square icon per book, filed alongside index.html and
+// referenced by relative path so the single HTML file doesn't have to
+// carry 14 images as base64. Keyed by the exact same book-name strings as
+// BOOK_URL. Now covers every book that actually appears in this week's odds
+// feed -- bookLogoImg() below still safe-degrades to the plain-text book
+// name for any future book that shows up without a matching asset yet.
 var BOOK_LOGO = {
   'DraftKings': 'logos/draftkings.png',
   'FanDuel': 'logos/fanduel.png',
   'Bally Bet': 'logos/ballybet.png',
   'BetMGM': 'logos/betmgm.png',
+  'BetRivers': 'logos/betrivers.png',
+  'bet365': 'logos/bet365.png',
   'Hard Rock Bet': 'logos/hardrockbet.png',
   'theScore Bet': 'logos/thescorebet.png',
   'Novig': 'logos/novig.png',
