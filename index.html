@@ -1,4 +1,7 @@
 <title>Break the Plane — Week 1</title>
+<link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="brand/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="brand/apple-touch-icon.png">
 <style>
 :root{
   --bg:#000D1A; --card:#001428; --border:#04203C; --border2:#0B3054;
@@ -789,7 +792,7 @@ function filterBar(){
 }
 function render(){
   var head='<div class="head"><div class="brand">'+
-    '<svg width="28" height="28" viewBox="0 0 134 134" fill="none" aria-hidden="true"><ellipse cx="21.9538" cy="111.068" rx="21.5612" ry="21.7233" fill="'+C.red+'"/><path d="M84.202 0.0207901C85.8707 0.0208411 88.1713 1.03856 89.2307 2.24585L125.003 43.1888C138.655 58.7464 134.091 72.5031 112.588 72.5031H98.0824C97.321 72.5031 96.8584 73.3425 97.265 73.9863L132.779 130.214C134.697 133.25 131.127 134.715 127.45 132.469L2.57136 58.3337C-0.11016 56.7418 -0.371784 54.188 2.14648 54.188H50.8101C52.5679 54.188 53.4139 52.0325 52.1254 50.8369L1.46572 3.82594C-0.739411 1.77964 -0.199344 0.0207914 2.63462 0.0207901H84.202Z" fill="'+C.red+'"/></svg>'+
+    '<img src="brand/logo-icon.png" width="28" height="28" alt="" aria-hidden="true" style="display:block">'+
     '<span class="wordmark"><small>Break the</small><b>PLANE</b></span></div>'+
     '<div class="badges"><span class="badge demo"><span class="live-dot"></span>LIVE PROJECTION</span><span class="badge week">WEEK '+DATA.week+' · '+DATA.season+'</span></div></div>';
   var list=DATA.players.filter(function(p){return state.pos==='All'||p.pos===state.pos;});
