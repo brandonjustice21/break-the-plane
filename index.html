@@ -89,16 +89,25 @@ button{font-family:inherit}
 .starbtn.abs{position:absolute;top:9px;right:9px;z-index:5}
 
 /* detail */
-.detail{padding:13px 14px 15px;border-top:1px solid var(--border);display:grid;gap:13px}
-.dlbl{font-family:var(--font-data);font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--n4);margin-bottom:7px}
+.detail{padding:13px 14px 15px;border-top:1px solid var(--border);display:grid;gap:12px}
+.dlbl{font-family:var(--font-data);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--n5);margin-bottom:7px}
 .stack{display:flex;height:14px;border-radius:4px;overflow:hidden;background:var(--border);border:1px solid var(--border2)}
 .legend{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:6px}
 .legend span{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;color:var(--n3)}
 .legend i{width:7px;height:7px;border-radius:2px;display:inline-block}
-.envgrid{display:flex;gap:12px;flex-wrap:wrap}
-.envgrid>div{flex:1 1 100px;min-width:100px;background:#000D1A;border:1px solid var(--border2);border-radius:8px;padding:9px 11px}
+/* research cards -- ported from the Claude Design canvas's player-detail mockup:
+   each research section gets its own dark tile (bg) on the lighter shell (card)
+   so sections read as distinct modules instead of a loose stack of rows. */
+.rcard{background:var(--bg);border:1px solid var(--border2);border-radius:14px;padding:14px 15px 15px}
+.rcard .dlbl{margin-bottom:10px}
+.rcard+.rcard{margin-top:0}
+.envgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.envgrid>div{background:#000D1A;border:1px solid var(--n6);border-radius:8px;padding:9px 11px}
 .envgrid b{font-family:var(--font-display);font-size:16px;font-weight:400;display:block;margin-top:2px;color:#fff}
 .envgrid i{font-style:normal;font-family:var(--font-data);font-size:9.5px;color:var(--n5);display:block;margin-top:2px}
+.mktgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.mktgrid b{font-family:var(--font-display);font-weight:400;font-size:21px;color:#fff;display:block}
+.mktgrid span{font-size:10.5px;color:var(--n3);margin-top:2px;display:block}
 .calib-box{border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:12px;border:1px solid}
 .ctx{font-size:11.5px;color:#CFDCEA;line-height:1.55;padding:9px 12px;border-radius:8px;background:rgba(242,46,69,.08);border:1px solid rgba(168,0,33,.55)}
 .due-note{font-size:10.5px;color:var(--n4);line-height:1.5}
@@ -416,18 +425,19 @@ function miniShareBar(p){
     '</div>';
 }
 function gauge(p,size){
+  // Full-circle dial (ported from the Claude Design canvas mockup) -- replaced the
+  // earlier 220-degree arc sweep with a simple stroke-dasharray circle, matching
+  // the hero gauge in Main.dc.html almost exactly (r/size and stroke/size ratios
+  // carried over from the mockup's 104px reference gauge).
   var g=grade(p.p_final),frac=clamp(p.p_final,0,1);
-  var r=size*.4,cx=size/2,cy=size*.56,sw=size*.09,start=160,sweep=220;
-  function pol(deg){var a=deg*Math.PI/180;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
-  function arc(f0,f1){var a0=start+sweep*f0,a1=start+sweep*f1,p0=pol(a0),p1=pol(a1);
-    return 'M '+p0[0]+' '+p0[1]+' A '+r+' '+r+' 0 '+((a1-a0)>180?1:0)+' 1 '+p1[0]+' '+p1[1];}
-  return '<div style="position:relative;width:'+size+'px;height:'+size*.78+'px;flex-shrink:0">'+
-    '<svg width="'+size+'" height="'+(size*.78)+'" viewBox="0 0 '+size+' '+(size*.74)+'">'+
-    '<path d="'+arc(0,1)+'" fill="none" stroke="'+C.n8+'" stroke-width="'+sw+'" stroke-linecap="round"/>'+
-    '<path d="'+arc(0,1)+'" pathLength="100" fill="none" stroke="'+g[1]+'" stroke-width="'+sw+'" stroke-linecap="round" stroke-dasharray="'+(frac*100)+' 100"/>'+
-    '</svg><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:'+size*.06+'px">'+
-    '<b style="font-family:var(--font-display);font-weight:400;font-size:'+size*.24+'px;line-height:.9;color:#fff">'+pct(p.p_final)+'</b>'+
-    '<span style="font-family:var(--font-data);font-size:'+size*.065+'px;letter-spacing:.08em;text-transform:uppercase;color:'+g[1]+';margin-top:2px">anytime TD</span></div></div>';
+  var r=size*.442,cx=size/2,cy=size/2,sw=size*.087,circ=2*Math.PI*r;
+  return '<div style="position:relative;width:'+size+'px;height:'+size+'px;flex-shrink:0">'+
+    '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" style="transform:rotate(-90deg)">'+
+    '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+C.n8+'" stroke-width="'+sw+'"/>'+
+    '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+g[1]+'" stroke-width="'+sw+'" stroke-linecap="round" stroke-dasharray="'+(frac*circ)+' '+circ+'"/>'+
+    '</svg><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">'+
+    '<b style="font-family:var(--font-display);font-weight:400;font-size:'+size*.23+'px;line-height:.9;color:#fff">'+pct(p.p_final)+'</b>'+
+    '<span style="font-family:var(--font-data);font-size:'+size*.065+'px;letter-spacing:.08em;text-transform:uppercase;color:'+g[1]+';margin-top:3px">anytime TD</span></div></div>';
 }
 function bar(label,disp,frac,color){
   return '<div><div style="display:flex;justify-content:space-between;font-size:10.5px;color:'+C.n4+';margin-bottom:4px"><span>'+label+'</span><b style="color:#fff;font-family:var(--font-data);font-weight:600">'+disp+'</b></div>'+
@@ -480,57 +490,20 @@ function newsHtml(p){
   '</a>';
 }
 function detail(p){
-  var blendHtml = (p.p_topdown==null || p.p_bottomup==null) ? '' :
-    '<div><div class="dlbl">How this number is built</div>'+
-      '<div style="display:grid;gap:8px">'+
-        bar('Game view', pct(p.p_topdown), p.p_topdown, C.teal)+
-        bar('Player view', pct(p.p_bottomup), p.p_bottomup, C.gold)+
-      '</div></div>';
-  var optionCHtml = p.p_option_c==null ? '' :
-    '<div><div class="dlbl">Model v2 (Beta)</div>'+
-      '<div style="display:grid;gap:8px">'+
-        bar('Trained-model probability', pct(p.p_option_c), p.p_option_c, C.volt)+
-      '</div></div>';
-  var alignHtml = !p.align ? '' :
-    '<div><div class="dlbl">Alignment profile <span style="font-weight:400;color:'+C.n5+'">'+(p.alignSource==='real'?'(2025 season)':'(projected — depth chart)')+'</span></div>'+
-      '<div style="display:grid;gap:8px">'+
-        bar('Out wide (boundary/X)', Math.round(p.align.wide*100)+'%', p.align.wide, C.n3)+
-        bar('Slot', Math.round(p.align.slot*100)+'%', p.align.slot, C.teal)+
-        (p.align.tight>0.02?bar('In-line (tight)', Math.round(p.align.tight*100)+'%', p.align.tight, C.gold):'')+
-      '</div>'+
-      alignMatchupHtml(p)+
-    '</div>';
+  // Section order and card treatment ported from the Claude Design canvas's
+  // "In-tool player detail view" mockup (Main.dc.html): a lead gauge+signals row,
+  // then Market Read, How This Number Is Built, Opportunity, Game Environment and
+  // a single merged Matchup Read card -- all real data, no illustrative values.
   var sigParts=[evChip(p),bumpChip(p),defTierChip(p),divChip(p),envChip(p),dueChip(p),hotChip(p),volumeChip(p),rzChip(p),slotWeaponChip(p),boundaryChip(p),consensusChip(p),limitedChip(p)].join('');
   var sigHtml = sigParts ? '<div style="display:flex;flex-wrap:wrap;gap:5px">'+sigParts+'</div>' : '';
-  var envHtml = p.lambda_team==null ? '' :
-    '<div><div class="dlbl">Game environment</div><div class="envgrid">'+
-      '<div><i>Team TD projection</i><b>'+p.lambda_team.toFixed(2)+'</b></div>'+
-      '<div><i>Vegas total</i><b>'+(p.total!=null?p.total:'—')+'</b></div>'+
-      '<div><i>Site</i><b style="font-size:13px">'+(p.isHome?'Home':'Away')+'</b></div>'+
-      '<div><i>Venue</i><b style="font-size:13px">'+roofLabel(p.roof)+'</b></div>'+
-      '<div><i>Matchup type</i><b style="font-size:13px">'+(p.divGame?'Division game':'Non-division')+'</b></div>'+
-    '</div></div>';
-  var bumpHtml = !p.roleBump ? '' :
-    '<div><div class="dlbl">Next man up</div><div style="font-size:11.5px;color:'+C.n3+';background:'+C.gold+'14;border:1px solid '+C.gold+'40;border-radius:8px;padding:10px 12px">'+
-      'In for <b style="color:#fff">'+esc(p.roleBump.outName)+'</b> ('+esc(p.roleBump.outInjury||'')+', '+esc(p.roleBump.outStatus)+') · '+
-      'target share +'+(p.roleBump.targetShareBump?Math.round(p.roleBump.targetShareBump*100):0)+'pt, rush share +'+(p.roleBump.rushShareBump?Math.round(p.roleBump.rushShareBump*100):0)+'pt'+
-    '</div></div>';
-  var defHtml = p.def_tier==null ? '' :
-    '<div><div class="dlbl">Defensive matchup</div><div style="font-size:11.5px;color:'+C.n3+'">'+esc(p.opp)+' has allowed <b style="color:#fff">'+p.def_tds_allowed+'</b> TDs/game over their last 4 (trailing) · #'+p.def_rank+' most in the league · <b style="color:'+(DEFCOLOR[p.def_tier])+'">'+p.def_tier+'</b> defense</div></div>';
-  var shareHtml = (p.target_share==null && p.rush_share==null && p.rz_share==null) ? '' :
-    '<div><div class="dlbl">Opportunity profile (walk-forward, trailing)</div><div style="display:grid;gap:8px">'+
-      (p.target_share!=null?bar('Target share',pct(p.target_share),p.target_share,C.teal):'')+
-      (p.rush_share!=null?bar('Rush share',pct(p.rush_share),p.rush_share,C.turf):'')+
-      (p.rz_share!=null?bar('Red-zone share (L4)',pct(p.rz_share),p.rz_share,C.gold):'')+
-    '</div></div>';
-  var dueHtml = (p.games_since_td==null || (p.games_since_td===0 && IS_SEASON_OPENER)) ? '' :
-    '<div><div class="dlbl">Streak context</div><div class="due-note">'+(p.games_since_td===0?'Scored a TD last week.':p.games_since_td+' game(s) since last TD.')+'</div></div>';
+  var leadHtml = '<div style="display:flex;align-items:center;gap:14px">'+gauge(p,78)+'<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">'+sigHtml+'</div></div>';
+
   var calib = p.has_market_odds
     ? (function(){
         var edge = p.plus_ev_edge, edgeUp = edge!=null && edge>=0;
         var edgeColor = edgeUp ? C.volt : C.n4;
         var books = (p.books||[]).slice().sort(function(a,b){return (b.price||-9999)-(a.price||-9999);});
-        var booksHtml = books.length ? '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">'+
+        var booksHtml = books.length ? '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">'+
           books.map(function(b){
             var url = BOOK_URL[b.book];
             // Favorite vs. longshot color cue -- American odds aren't intuitive to
@@ -543,29 +516,76 @@ function detail(p){
               ? '<a href="'+url+'" target="_blank" rel="noopener" class="sig" style="color:'+C.n3+';background:'+C.n8+';border:1px solid '+C.n6+';text-decoration:none;display:inline-flex;gap:5px;align-items:center">'+inner+' <span style="color:'+C.n5+'">↗</span></a>'
               : '<span class="sig" style="color:'+C.n3+';background:'+C.n8+';border:1px solid '+C.n6+'">'+inner+'</span>';
           }).join('') + '</div>' : '';
-        return '<div><div class="dlbl">Market odds — Anytime TD ('+p.market_n_books+' book'+(p.market_n_books===1?'':'s')+')</div>'+
-          '<div class="calib-box" style="background:rgba(0,212,170,.08);border-color:rgba(0,212,170,.3)">'+
-            '<div style="flex:1;display:flex;gap:18px;align-items:baseline;flex-wrap:wrap">'+
-              '<div><b style="font-family:var(--font-display);font-size:20px;color:#fff">'+pct(p.p_final)+'</b> <span style="font-size:11px;color:'+C.n3+'">model</span></div>'+
-              '<div><b style="font-family:var(--font-display);font-size:20px;color:'+C.n3+'">'+pct(p.market_consensus)+'</b> <span style="font-size:11px;color:'+C.n3+'">market consensus</span></div>'+
-              '<div><b style="font-family:var(--font-display);font-size:20px;color:'+edgeColor+'">'+(edgeUp?'+':'')+(edge!=null?Math.round(edge*100):'—')+'%</b> <span style="font-size:11px;color:'+C.n3+'">edge</span></div>'+
-            '</div></div>'+
+        return '<div class="rcard"><div class="dlbl">Market Read · Anytime TD ('+p.market_n_books+' book'+(p.market_n_books===1?'':'s')+')</div>'+
+          '<div class="mktgrid">'+
+            '<div><b>'+pct(p.p_final)+'</b><span>Model</span></div>'+
+            '<div><b style="color:'+C.n3+'">'+pct(p.market_consensus)+'</b><span>Market</span></div>'+
+            '<div><b style="color:'+edgeColor+'">'+(edgeUp?'+':'')+(edge!=null?Math.round(edge*100):'—')+'%</b><span>Edge</span></div>'+
+          '</div>'+
           booksHtml+
         '</div>';
       })()
-    : '<div><div class="dlbl">Backtested calibration (no market odds matched for this player)</div>'+
+    : '<div class="rcard"><div class="dlbl">Backtested Calibration <span style="font-weight:400;text-transform:none;letter-spacing:0">(no market odds matched)</span></div>'+
       '<div class="calib-box" style="background:rgba(0,212,170,.08);border-color:rgba(0,212,170,.3)">'+
         '<div style="flex:1"><b style="font-family:var(--font-display);font-size:20px;color:#fff">'+pct(p.p_final)+'</b> <span style="font-size:11.5px;color:'+C.n3+'">model probability</span>'+
         '<div style="font-size:11px;color:'+C.n4+';margin-top:4px">'+calibNote(p)+'.</div></div></div>'+
       '</div>';
+
+  var blendHtml = (p.p_topdown==null || p.p_bottomup==null) ? '' :
+    '<div class="rcard"><div class="dlbl">How This Number Is Built</div>'+
+      '<div style="display:grid;gap:8px">'+
+        bar('Game view', pct(p.p_topdown), p.p_topdown, C.teal)+
+        bar('Player view', pct(p.p_bottomup), p.p_bottomup, C.gold)+
+      '</div></div>';
+  var optionCHtml = p.p_option_c==null ? '' :
+    '<div class="rcard"><div class="dlbl">Model v2 (Beta)</div>'+
+      '<div style="display:grid;gap:8px">'+
+        bar('Trained-model probability', pct(p.p_option_c), p.p_option_c, C.volt)+
+      '</div></div>';
+  var shareHtml = (p.target_share==null && p.rush_share==null && p.rz_share==null) ? '' :
+    '<div class="rcard"><div class="dlbl">Opportunity · Trailing (L4)</div><div style="display:grid;gap:8px">'+
+      (p.target_share!=null?bar('Target share',pct(p.target_share),p.target_share,C.teal):'')+
+      (p.rush_share!=null?bar('Rush share',pct(p.rush_share),p.rush_share,C.turf):'')+
+      (p.rz_share!=null?bar('Red-zone share (L4)',pct(p.rz_share),p.rz_share,C.gold):'')+
+    '</div></div>';
+  var envHtml = p.lambda_team==null ? '' :
+    '<div class="rcard"><div class="dlbl">Game Environment</div><div class="envgrid">'+
+      '<div><i>Team TD proj</i><b>'+p.lambda_team.toFixed(2)+'</b></div>'+
+      '<div><i>Vegas total</i><b>'+(p.total!=null?p.total:'—')+'</b></div>'+
+      '<div><i>Site</i><b style="font-size:13px">'+(p.isHome?'Home':'Away')+'</b></div>'+
+      '<div><i>Venue</i><b style="font-size:13px">'+roofLabel(p.roof)+'</b></div>'+
+    '</div></div>';
+  // Matchup Read merges the defensive-matchup sentence with the alignment-bucket
+  // tile into one card, per the mockup -- these were two disconnected pieces
+  // before (defHtml + alignMatchupHtml nested under the alignment bars).
+  var matchupHtml = (p.def_tier==null && !p.alignMatchup) ? '' :
+    '<div class="rcard"><div class="dlbl">Matchup Read</div>'+
+      (p.def_tier==null ? '' : '<div style="font-size:12px;color:'+C.n3+';line-height:1.6">'+esc(p.opp)+' has allowed <b style="color:#fff">'+p.def_tds_allowed+'</b> TDs/game over their last 4 (trailing) · #'+p.def_rank+' most in the league · <b style="color:'+(DEFCOLOR[p.def_tier])+'">'+p.def_tier+'</b> defense</div>')+
+      alignMatchupHtml(p)+
+    '</div>';
+  var alignHtml = (!p.align || ((p.align.wide||0)+(p.align.slot||0)+(p.align.tight||0) < 0.03)) ? '' :
+    '<div class="rcard"><div class="dlbl">Alignment Profile <span style="font-weight:400;text-transform:none;letter-spacing:0;color:'+C.n5+'">'+(p.alignSource==='real'?'(2025 season)':'(projected — depth chart)')+'</span></div>'+
+      '<div style="display:grid;gap:8px">'+
+        bar('Out wide (boundary/X)', Math.round(p.align.wide*100)+'%', p.align.wide, C.n3)+
+        bar('Slot', Math.round(p.align.slot*100)+'%', p.align.slot, C.teal)+
+        (p.align.tight>0.02?bar('In-line (tight)', Math.round(p.align.tight*100)+'%', p.align.tight, C.gold):'')+
+      '</div></div>';
+  var bumpHtml = !p.roleBump ? '' :
+    '<div class="rcard"><div class="dlbl">Next Man Up</div><div style="font-size:11.5px;color:'+C.n3+';background:'+C.gold+'14;border:1px solid '+C.gold+'40;border-radius:8px;padding:10px 12px">'+
+      'In for <b style="color:#fff">'+esc(p.roleBump.outName)+'</b> ('+esc(p.roleBump.outInjury||'')+', '+esc(p.roleBump.outStatus)+') · '+
+      'target share +'+(p.roleBump.targetShareBump?Math.round(p.roleBump.targetShareBump*100):0)+'pt, rush share +'+(p.roleBump.rushShareBump?Math.round(p.roleBump.rushShareBump*100):0)+'pt'+
+    '</div></div>';
+  var dueHtml = (p.games_since_td==null || (p.games_since_td===0 && IS_SEASON_OPENER)) ? '' :
+    '<div class="due-note">'+(p.games_since_td===0?'Scored a TD last week.':p.games_since_td+' game(s) since last TD.')+'</div>';
   var watchHtml = '<button class="watchbtn'+(state.watchlist.has(p.id)?' on':'')+'" data-star="'+p.id+'">'+
     (state.watchlist.has(p.id)?'★  On My Board — tap to remove':'☆  Add to My Board')+'</button>';
   return '<div class="detail">'+
-    sigHtml +
-    newsHtml(p) +
+    leadHtml +
+    calib +
     blendHtml +
     optionCHtml +
-    envHtml + bumpHtml + defHtml + shareHtml + alignHtml + dueHtml + calib + watchHtml +
+    shareHtml + envHtml + matchupHtml + alignHtml + bumpHtml + dueHtml + watchHtml +
+    newsHtml(p) +
     '</div>';
 }
 function card(p){
