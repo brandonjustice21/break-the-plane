@@ -50,6 +50,7 @@ button{font-family:inherit}
 .pos{font-family:var(--font-data);font-weight:600;font-size:9.5px;letter-spacing:.06em;padding:2px 7px;border-radius:4px}
 .grade{font-family:var(--font-display);font-size:11px;padding:2px 9px;border-radius:999px}
 .signals{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.hero-gauge{flex-shrink:0}
 .sig{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:600;white-space:nowrap}
 
 /* controls */
@@ -88,7 +89,7 @@ button{font-family:inherit}
 .pname{font-weight:700;font-size:14.5px;color:#fff;letter-spacing:-.01em}
 .sub{font-size:11px;color:var(--n4);font-family:var(--font-data);margin-top:2px}
 .right{margin-left:auto;text-align:right;flex-shrink:0}
-.hit{font-family:var(--font-data);font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:5px}
+.hit{font-family:var(--font-data);font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:5px;flex-shrink:0;white-space:nowrap}
 .caret{color:var(--n6);font-size:11px;margin-left:8px;flex-shrink:0}
 .sigrow{display:flex;flex-wrap:wrap;gap:5px;padding:0 13px 11px}
 .sharebar{display:flex;height:5px;border-radius:999px;overflow:hidden;background:var(--n6);margin-top:6px;max-width:170px}
@@ -140,6 +141,7 @@ table.ptable{width:100%;border-collapse:collapse;min-width:720px}
 .gamehead{display:flex;align-items:center;gap:9px;padding:10px 13px;background:linear-gradient(90deg,rgba(242,46,69,.10),#001428);border-bottom:1px solid var(--border);flex-wrap:wrap;font-family:var(--font-data);font-size:11px;color:var(--n3)}
 .gamerow{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;border-radius:8px;width:100%;background:none;border:none;text-align:left;color:inherit}
 .gamerow:hover{background:rgba(255,255,255,.03)}
+.gamerow-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .foot{padding:12px 16px 14px;font-family:var(--font-data);font-size:9.5px;letter-spacing:.03em;color:var(--n6);text-align:center;line-height:1.6}
 .foot a{color:var(--n5)}
@@ -209,6 +211,18 @@ table.ptable{width:100%;border-collapse:collapse;min-width:720px}
      drop from the collapsed row entirely and give the name column the room. */
   .right{display:none}
   .chead{gap:8px}
+  /* Hero card: at narrow widths avatar(74px)+text-column+gauge(116px) all still
+     fit on one nominal flex line (align-items:center keeps them from truly
+     wrapping), but that only leaves ~130-150px for the name/meta/chip column --
+     it wraps hard, and align-items:center then centers the fixed-size avatar and
+     gauge against that much-taller column, reading as a big dead gutter above
+     and below both of them. Forcing the gauge onto its own full-width centered
+     line gives the text column the full row width instead. */
+  .hero-gauge{width:100%;display:flex;justify-content:center;margin-top:10px}
+  /* By Game rows: the kickoff time is now shown once per game group in .gamehead
+     (see gameView()), so the repeated per-row copy is redundant here and this is
+     the width where the row is tightest -- drop it and let the name column breathe. */
+  .gamerow-kickoff{display:none}
 }
 </style>
 
@@ -787,6 +801,10 @@ function gameView(list){
     var g0=gl[0];
     var awayHome = g0.isHome ? [g0.opp,g0.team] : [g0.team,g0.opp];
     return '<div class="gamecard"><div class="gamehead">'+teamChip(awayHome[0])+'<span style="color:'+C.n6+'">@</span>'+teamChip(awayHome[1])+
+      // Kickoff time shown once per game group here (every player in the group
+      // shares it) instead of repeated on each player row below -- that repeat
+      // was the thing colliding with player names on narrow screens.
+      (g0.kickoff?'<span style="color:'+C.n5+'">'+esc(g0.kickoff)+'</span>':'')+
       '<span style="flex:1"></span>'+(g0.total!=null?'<span>O/U '+g0.total+'</span>':'')+'</div>'+
       '<div style="padding:6px 4px">'+gl.map(function(p){
         var open=state.expanded===p.id, g=grade(p.p_final);
@@ -794,8 +812,11 @@ function gameView(list){
           '<button class="gamerow" data-toggle="'+p.id+'">'+
           '<span style="font-family:var(--font-display);font-size:14px;color:'+g[1]+';width:40px;text-align:center;flex-shrink:0">'+pct(p.p_final)+'</span>'+
           avatar(p,26)+posBadge(p.pos)+
-          '<b style="color:#fff;font-size:13px;flex:1;min-width:0;padding-right:30px">'+esc(p.name)+'</b>'+
-          outcomeChip(p)+
+          // Truncates instead of wrapping -- a long name wrapping to 2-3 lines used
+          // to visually collide with the kickoff chip that sits right after it,
+          // since .gamerow's own height is only sized for one line of text.
+          '<b class="gamerow-name" style="color:#fff;font-size:13px;flex:1;min-width:0;padding-right:30px">'+esc(p.name)+'</b>'+
+          '<span class="gamerow-kickoff">'+outcomeChip(p)+'</span>'+
           '<span class="caret">'+(open?'▲':'▼')+'</span></button>'+
           starBtn(p,true)+
           (open?detail(p):'')+'</div>';
@@ -855,9 +876,13 @@ function render(){
     '<span style="min-width:0;flex:1"><span style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:6px">'+
     '<span style="font-family:var(--font-display);font-size:12px;color:'+C.n5+'">#1</span>'+teamChip(hero.team)+posBadge(hero.pos)+gradePill(hero.p_final)+'</span>'+
     '<span class="hero-name" style="display:block">'+esc(hero.name)+'</span>'+
-    '<span class="meta" style="margin-top:6px">'+(hero.isHome?'vs':'@')+' '+esc(hero.opp)+' <span>O/U '+hero.total+'</span><span style="color:'+C.n6+'">·</span><span>'+(hero.kickoff?esc(hero.kickoff):'Kickoff TBD')+'</span></span>'+
+    // O/U + separator dot + kickoff used to be three independent flex items inside
+    // .meta (which is itself display:flex;flex-wrap:wrap) -- at narrow widths the
+    // wrap could land BETWEEN them, orphaning the lone "·" on its own line. Keeping
+    // them in one span makes them wrap together as a single unit, never split.
+    '<span class="meta" style="margin-top:6px">'+(hero.isHome?'vs':'@')+' '+esc(hero.opp)+' <span>O/U '+hero.total+' <span style="color:'+C.n6+'">·</span> '+(hero.kickoff?esc(hero.kickoff):'Kickoff TBD')+'</span></span>'+
     '<span class="signals">'+defTierChip(hero)+envChip(hero)+dueChip(hero)+hotChip(hero)+'</span></span>'+
-    gauge(hero,116)+'</div></div>';
+    '<div class="hero-gauge">'+gauge(hero,116)+'</div></div></div>';
   // A second, different kind of story below the hero -- the hero always leads
   // with the same "obvious workhorse" pick, so this surfaces whatever else is
   // most notable this week (a big market disagreement, or a role-bump story)
