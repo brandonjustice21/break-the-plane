@@ -696,13 +696,13 @@ function detail(p){
   var watchHtml = '<button class="watchbtn'+(state.watchlist.has(p.id)?' on':'')+'" data-star="'+p.id+'">'+
     (state.watchlist.has(p.id)?'★  On My Board — tap to remove':'☆  Add to My Board')+'</button>';
   return '<div class="detail">'+
+    newsHtml(p) +
     leadHtml +
     calib +
     sbHtml +
     blendHtml +
     optionCHtml +
     seasonHtml + shareHtml + envHtml + matchupHtml + alignHtml + bumpHtml + dueHtml + watchHtml +
-    newsHtml(p) +
     '</div>';
 }
 function card(p){
