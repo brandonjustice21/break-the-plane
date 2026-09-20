@@ -300,6 +300,20 @@ def fetch_opticodds(week, key, sched_wk):
                 for o in g.get("odds", []):
                     market = str(o.get("market") or o.get("market_id") or "")
                     market_l = market.lower()
+                    # Same root cause as the TD-odds bug, applied to game lines:
+                    # a bare "total"/"spread" substring also matches derivative
+                    # sub-markets (team total, 1st-half total, quarter spread,
+                    # alternate lines) that carry much smaller numbers than the
+                    # real full-game line. Caught live on 2026-09-20 -- with no
+                    # exclusion, BAL@NO's real 46.5 full-game total was getting
+                    # overwritten by what looks like a team-total market (19.5),
+                    # and GB@NYJ / KC@IND's real ~42.5/47.5 totals were getting
+                    # overwritten by what looks like a quarter-total market
+                    # (9.5, identical for both games -- too coincidental to be
+                    # real full-game numbers). Deny-list the sub-market terms,
+                    # since the exact primary-market name is still unverified.
+                    if any(x in market_l for x in ("half", "quarter", "team", "alt", "1q", "2q", "3q", "4q", "1h", "2h")):
+                        continue
                     is_total = "total" in market_l or "over/under" in market_l or "over under" in market_l
                     is_spread = "spread" in market_l or "point spread" in market_l or "handicap" in market_l
                     if not (is_total or is_spread):
@@ -310,6 +324,14 @@ def fetch_opticodds(week, key, sched_wk):
                     try:
                         points = float(points)
                     except (TypeError, ValueError):
+                        continue
+                    # Plausibility guard (belt-and-suspenders on top of the
+                    # deny-list): real NFL full-game totals and spreads never
+                    # fall outside these ranges, but a mis-tagged sub-market
+                    # line often does.
+                    if is_total and not (30 <= points <= 75):
+                        continue
+                    if is_spread and not (-35 <= points <= 35):
                         continue
                     sel_line = str(o.get("selection_line") or "").lower()
                     entry = lines_by_fixture.setdefault(fid, {})
