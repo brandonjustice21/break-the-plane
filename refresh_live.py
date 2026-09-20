@@ -552,6 +552,27 @@ def patch_dashboard(dashboard, recomputed, lam):
     return dashboard
 
 
+def sanitize_for_json(obj):
+    """Recursively replace NaN/Infinity with None. Python's json module writes
+    bare `NaN`/`Infinity` tokens by default (valid Python float repr, invalid
+    JSON) -- the OLD build-time __DATA_JSON__ = {...} bake-in got away with
+    this because that's raw JS source (NaN is a real identifier there), but
+    the new runtime fetch('data.json') does a strict JSON.parse, which throws
+    on the first bare NaN it hits. This is a genuine latent bug in the export
+    pipeline's scoreBreakdown math (a rookie/no-track-record player's
+    "opportunity"/"composite" score dividing by a zero sample size) -- it
+    predates this refresh script and previously did no visible harm.
+    Sanitizing here fixes the immediate breakage without touching script 37;
+    the underlying scoreBreakdown NaN is worth a real fix in that script."""
+    if isinstance(obj, float):
+        return None if (obj != obj or obj in (float("inf"), float("-inf"))) else obj
+    if isinstance(obj, dict):
+        return {k: sanitize_for_json(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [sanitize_for_json(v) for v in obj]
+    return obj
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--week", type=int, default=2)
@@ -594,7 +615,7 @@ def main():
     seed_path = data_json_path if os.path.exists(data_json_path) else dashboard_path
     dashboard = json.load(open(seed_path))
 
-    patched = patch_dashboard(dashboard, recomputed, lam)
+    patched = sanitize_for_json(patch_dashboard(dashboard, recomputed, lam))
     with open(data_json_path, "w") as f:
         json.dump(patched, f)
     log(f"Wrote {data_json_path}: {len(patched['players'])} players, updated_at={patched['updated_at']}")
