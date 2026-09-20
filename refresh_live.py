@@ -90,6 +90,7 @@ BOOK_BATCHES = [
     ["Pinnacle"],
 ]
 TD_MARKETS = ["Anytime Touchdown Scorer", "Any Time Touchdown Scorer", "To Score A Touchdown"]
+TD_MARKETS_L = [m.lower() for m in TD_MARKETS]
 
 
 def log(msg):
@@ -225,55 +226,80 @@ def fetch_opticodds(week, key, sched_wk):
     for i in range(0, len(fixture_ids), 5):
         batch = fixture_ids[i:i + 5]
         for books in BOOK_BATCHES:
-            params = [("key", key)]
-            params += [("fixture_id", fid) for fid in batch]
-            params += [("sportsbook", b) for b in books]
-            # NOTE: no `market` filter here for game lines -- OpticOdds' exact
-            # market-name strings for NFL spread/total have not been observed
-            # in this environment (no key available to test against). We pull
-            # every market for the batch and filter client-side by substring,
-            # the same defensive pattern already proven for touchdown markets
-            # below. This costs a larger payload, not correctness.
-            url = f"{base}/fixtures/odds?{qs(params)}"
+            base_params = [("key", key)]
+            base_params += [("fixture_id", fid) for fid in batch]
+            base_params += [("sportsbook", b) for b in books]
+
+            # ---- Pass 1: Anytime TD odds, SERVER-side market filter ----
+            # Restores script 33/api_odds.ts's proven-safe pattern: pass
+            # `market=` explicitly so OpticOdds itself only returns the
+            # confirmed anytime-TD markets. This is the fix for a real bug
+            # (shipped, then caught live on 2026-09-20): when this call
+            # shared the unfiltered game-lines response below and matched
+            # client-side on a bare "touchdown" substring, it also picked up
+            # unrelated long-shot side markets (e.g. "to score 2+ TDs",
+            # "first/last touchdown scorer") for the same player. The
+            # best-price logic (highest American odds wins) then let one of
+            # those side-market prices silently overwrite the correct
+            # primary-market price -- e.g. Derrick Henry showing +4499
+            # (~2% implied) against a 71% model projection. Filtering the
+            # market server-side removes the ambiguity entirely.
+            td_params = list(base_params) + [("market", m) for m in TD_MARKETS]
+            td_url = f"{base}/fixtures/odds?{qs(td_params)}"
             try:
-                oj = get_json(url)
+                td_oj = get_json(td_url)
             except Exception as e:
-                log(f"  odds fetch failed for batch {batch} / {books}: {e}")
-                continue
-            for g in oj.get("data", []):
-                fid = g.get("id") or g.get("fixture_id")
+                log(f"  TD odds fetch failed for batch {batch} / {books}: {e}")
+                td_oj = {"data": []}
+            for g in td_oj.get("data", []):
                 for o in g.get("odds", []):
                     odds_seen += 1
                     market = str(o.get("market") or o.get("market_id") or "")
                     market_l = market.lower()
-
-                    # ---- Anytime TD (confirmed market names, from the live api_odds.ts pipeline) ----
-                    if any(m.lower() in market_l for m in [m.lower() for m in TD_MARKETS]) or "touchdown" in market_l:
-                        line = str(o.get("selection_line") or "").lower()
-                        if line in ("no", "under"):
-                            continue
-                        player = str(o.get("selection") or "").strip()
-                        if not player:
-                            player = re.sub(r"\s+(yes|no|over|under).*$", "", str(o.get("name") or ""), flags=re.I).strip()
-                        try:
-                            price = float(o.get("price"))
-                        except (TypeError, ValueError):
-                            continue
-                        if not player or not price:
-                            continue
-                        k = norm_name(player)
-                        if k not in td_players or price > td_players[k]["price"]:
-                            td_players[k] = {"price": price, "book": str(o.get("sportsbook") or ""), "player_display": player}
-                        pb = per_book_td.setdefault(k, {})
-                        book = str(o.get("sportsbook") or "")
-                        if book not in pb or price > pb[book]:
-                            pb[book] = price
+                    # Belt-and-suspenders client check mirroring script 33 --
+                    # the server-side `market=` param is the real filter, this
+                    # just guards against an unexpected response shape.
+                    if not any(m.lower() in market_l for m in TD_MARKETS_L):
                         continue
-
-                    # ---- game lines: spread / total, matched by substring only ----
-                    # (unverified exact market-name strings -- see module docstring)
-                    if fid is None:
+                    line = str(o.get("selection_line") or "").lower()
+                    if line in ("no", "under"):
                         continue
+                    player = str(o.get("selection") or "").strip()
+                    if not player:
+                        player = re.sub(r"\s+(yes|no|over|under).*$", "", str(o.get("name") or ""), flags=re.I).strip()
+                    try:
+                        price = float(o.get("price"))
+                    except (TypeError, ValueError):
+                        continue
+                    if not player or not price:
+                        continue
+                    k = norm_name(player)
+                    if k not in td_players or price > td_players[k]["price"]:
+                        td_players[k] = {"price": price, "book": str(o.get("sportsbook") or ""), "player_display": player}
+                    pb = per_book_td.setdefault(k, {})
+                    book = str(o.get("sportsbook") or "")
+                    if book not in pb or price > pb[book]:
+                        pb[book] = price
+
+            # ---- Pass 2: game lines (spread/total), NO market filter ----
+            # OpticOdds' exact NFL spread/total market-name strings are still
+            # unverified in this environment, so this pass pulls every market
+            # for the batch and filters client-side by substring -- but it is
+            # now used ONLY for spread/total extraction, never for anytime-TD
+            # odds, so it can no longer contaminate player prices above.
+            lines_url = f"{base}/fixtures/odds?{qs(base_params)}"
+            try:
+                lines_oj = get_json(lines_url)
+            except Exception as e:
+                log(f"  game-line odds fetch failed for batch {batch} / {books}: {e}")
+                continue
+            for g in lines_oj.get("data", []):
+                fid = g.get("id") or g.get("fixture_id")
+                if fid is None:
+                    continue
+                for o in g.get("odds", []):
+                    market = str(o.get("market") or o.get("market_id") or "")
+                    market_l = market.lower()
                     is_total = "total" in market_l or "over/under" in market_l or "over under" in market_l
                     is_spread = "spread" in market_l or "point spread" in market_l or "handicap" in market_l
                     if not (is_total or is_spread):
