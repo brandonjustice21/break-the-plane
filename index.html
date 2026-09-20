@@ -475,6 +475,19 @@ function boundaryChip(p){
   if(p.pos!=='WR' || !p.align || p.align.wide<0.75) return '';
   return '<span class="sig" style="color:'+C.n3+';background:'+C.n3+'1f;border:1px solid '+C.n3+'4d">Boundary '+Math.round(p.align.wide*100)+'%</span>';
 }
+function zoneEdgeChip(p){
+  // Passing Matchup Profile -- a target-depth/direction zone comparison
+  // (never a route type). Only surfaces on the collapsed row when the edge
+  // is real (|edge| >= 0.75 YPT above/below league in the player's own
+  // highest-volume zone) and the sample isn't flagged thin.
+  if(p.pos==='QB') return '';
+  var pm=p.passingMatchup;
+  if(!pm || pm.smallSample) return '';
+  var v=pm.oppYptVsLeague;
+  if(v>=0.75) return '<span class="sig" style="color:'+C.turf+';background:'+C.turf+'1f;border:1px solid '+C.turf+'4d">'+pm.zoneLabel+' edge +'+v.toFixed(1)+' YPT</span>';
+  if(v<=-0.75) return '<span class="sig" style="color:'+C.n4+';background:'+C.n4+'1f;border:1px solid '+C.n4+'4d">'+pm.zoneLabel+' tough '+v.toFixed(1)+' YPT</span>';
+  return '';
+}
 function edgeBadge(p){
   // Surfaces the model-vs-market edge directly on the COLLAPSED card row --
   // previously this only appeared after tapping into the detail panel, even
@@ -737,6 +750,29 @@ function detail(p){
       (p.def_tier==null ? '' : '<div style="font-size:12px;color:'+C.n3+';line-height:1.6">'+esc(p.opp)+' has allowed <b style="color:#fff">'+p.def_tds_allowed+'</b> TDs/game over their last 4 (trailing) · #'+p.def_rank+' most in the league · <b style="color:'+(DEFCOLOR[p.def_tier])+'">'+p.def_tier+'</b> defense</div>')+
       alignMatchupHtml(p)+
     '</div>';
+  // Passing Matchup Profile: the player's own highest-volume target zone
+  // (depth x direction, e.g. "Deep left") next to what this week's opponent
+  // allows there vs. the league. Target-based, never a route type -- see
+  // passing-matchup-profile-field-audit.md. null passingMatchup means no
+  // zone cleared a real sample floor (trailing 2023-2025), shown as
+  // "Limited data" rather than a fabricated number.
+  var zoneHtml = (function(){
+    if(p.pos==='QB') return '';  // zone data is about being targeted as a receiver; doesn't apply to a passer
+    var pm = p.passingMatchup;
+    var head = '<div class="rcard"><div class="dlbl">Passing Matchup Profile <span style="font-weight:400;text-transform:none;letter-spacing:0;color:'+C.n5+'">(target zone, not routes)</span></div>';
+    if(!pm) return head+'<div style="font-size:11px;color:'+C.n4+'">Limited data — no target zone has a reliable sample for this player yet.</div></div>';
+    var edgeColor = pm.oppYptVsLeague>=0.5 ? C.turf : pm.oppYptVsLeague<=-0.5 ? C.n4 : C.n3;
+    var sign = pm.oppYptVsLeague>=0 ? '+' : '';
+    return head+
+      '<div style="font-size:11.5px;color:'+C.n3+';line-height:1.6;margin-bottom:9px">Signature zone: <b style="color:#fff">'+pm.zoneLabel+'</b> ('+pm.playerTargets+' targets, trailing) — '+esc(pm.opponent)+' allows <b style="color:'+edgeColor+'">'+sign+pm.oppYptVsLeague.toFixed(2)+' YPT</b> vs. league there'+(pm.smallSample?' <span style="color:'+C.n5+'">(small sample)</span>':'')+'</div>'+
+      '<div style="display:grid;gap:8px">'+
+        bar('His '+pm.zoneLabel+' YPT', pm.playerYpt.toFixed(1), clamp(pm.playerYpt/12,0,1), C.teal)+
+        bar(pm.opponent+' allows (YPT)', pm.oppYptAllowed.toFixed(1), clamp(pm.oppYptAllowed/12,0,1), edgeColor)+
+        bar('League avg (YPT)', pm.leagueYpt.toFixed(1), clamp(pm.leagueYpt/12,0,1), C.n4)+
+      '</div>'+
+      '<div style="font-size:10px;color:'+C.n5+';margin-top:9px;line-height:1.5">Target depth/direction tendency and opponent production allowed -- not a route-compatibility score or coverage-scheme read (nflverse/FTN charting don\'t carry man/zone or route-type data).</div>'+
+    '</div>';
+  })();
   var alignHtml = (!p.align || ((p.align.wide||0)+(p.align.slot||0)+(p.align.tight||0) < 0.03)) ? '' :
     '<div class="rcard"><div class="dlbl">Alignment Profile <span style="font-weight:400;text-transform:none;letter-spacing:0;color:'+C.n5+'">'+(p.alignSource==='real'?'(2025 season)':'(projected — depth chart)')+'</span></div>'+
       '<div style="display:grid;gap:8px">'+
@@ -760,7 +796,7 @@ function detail(p){
     sbHtml +
     blendHtml +
     optionCHtml +
-    seasonHtml + shareHtml + envHtml + matchupHtml + alignHtml + bumpHtml + dueHtml + watchHtml +
+    seasonHtml + shareHtml + envHtml + matchupHtml + zoneHtml + alignHtml + bumpHtml + dueHtml + watchHtml +
     '</div>';
 }
 function card(p){
@@ -779,7 +815,7 @@ function card(p){
     '</span>'+
     '<span class="right" style="margin-right:28px">'+(p.has_market_odds?oddsSummaryHtml(p):outcomeChip(p))+'</span>'+
     '<span class="caret">'+(open?'▲':'▼')+'</span></button>'+
-    (open?detail(p):'<div class="sigrow">'+evChip(p)+bumpChip(p)+defTierChip(p)+divChip(p)+envChip(p)+dueChip(p)+hotChip(p)+volumeChip(p)+rzChip(p)+slotWeaponChip(p)+boundaryChip(p)+consensusChip(p)+limitedChip(p)+'</div>')+
+    (open?detail(p):'<div class="sigrow">'+evChip(p)+bumpChip(p)+defTierChip(p)+zoneEdgeChip(p)+divChip(p)+envChip(p)+dueChip(p)+hotChip(p)+volumeChip(p)+rzChip(p)+slotWeaponChip(p)+boundaryChip(p)+consensusChip(p)+limitedChip(p)+'</div>')+
     '</div>';
 }
 function tableView(list){
