@@ -1,0 +1,59 @@
+name: Hourly live refresh
+
+# Replicates RotoBombs' hourly-cron pattern for Break the Plane: no
+# RotoWire scraping, no re-fitting the model -- just re-pulling live inputs
+# (ESPN injuries, OpticOdds game lines + Anytime TD odds) and re-running the
+# already-fitted formula chain (see refresh_live.py / model_constants_2026.json)
+# to produce a fresh data.json. Vercel's static hosting picks up the new
+# data.json on push with no rebuild needed -- the page fetches it at runtime.
+#
+# GitHub Actions' free tier gives hourly cron for free (unlike Vercel Hobby,
+# capped at once/day) -- see refresh-runbook.md for the full comparison.
+
+on:
+  schedule:
+    # Every hour, at :07 past -- offset from the top of the hour so this
+    # doesn't line up with everyone else's :00 cron and hit GitHub's queue
+    # at its busiest moment. GitHub Actions cron is best-effort, not exact.
+    - cron: "7 * * * *"
+  workflow_dispatch: {}  # lets Wallace trigger a refresh on demand from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-live
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run live refresh
+        env:
+          ODDSJAM_KEY: ${{ secrets.ODDSJAM_KEY }}
+          BTP_ND: ${{ github.workspace }}/data/nflverse
+          BTP_OUT: ${{ github.workspace }}/data
+          BTP_SITE: ${{ github.workspace }}
+        run: python3 refresh_live.py --week 2
+
+      - name: Commit data.json if changed
+        run: |
+          git config user.name "break-the-plane-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if git diff --quiet -- data.json; then
+            echo "No change in data.json this run -- nothing to commit."
+          else
+            git add data.json
+            git commit -m "Hourly live refresh: $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
