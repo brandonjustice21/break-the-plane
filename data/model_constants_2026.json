@@ -1,0 +1,11 @@
+{
+  "_comment": "Reused, not refit: intercept/w_implied/w_trailing/pts_to_td_ratio/league_rush_share are fit ONLY on real, played season < 2026 data (2022-2025 play-by-play + schedules). The hourly live-refresh job reuses these constants as-is every run -- it never refits them. Only implied_total (live Vegas lines) and trailing_off_tds / rush_share (updated once a week, after real games are played) change between runs. Regenerate this file only when a new season of played data should be folded into the fit (i.e. once a year, not once an hour).",
+  "season_fit_through": 2025,
+  "generated_at_season_week_context": "generated during 2026 season, pre-Week-2-lock",
+  "intercept": -0.8011834682538893,
+  "w_implied": 1.3042095578293136,
+  "w_trailing": 0.03226167938761759,
+  "pts_to_td_ratio": 9.341599560761347,
+  "league_rush_share": 0.38799414348462663,
+  "league_avg_tds_per_team_game": 2.3653679653679656
+}

@@ -1,0 +1,79 @@
+team,gsis_id,name,pos_abb,pos_rank,injury,status
+ARI,00-0039921,Trey Benson,RB,5.0,Knee,IR
+ARI,00-0033553,James Conner,RB,4.0,Foot,IR-R
+ATL,00-0040432,Beaux Collins,WR,6.0,Undisclosed,IR-R
+ATL,00-0036984,Trey Sermon,RB,3.0,Undisclosed,IR
+BAL,00-0040870,Ja'Kobi Lane,WR,3.0,Wrist,IR
+BAL,00-0040888,Adam Randall,RB,4.0,Undisclosed,IR-R
+BUF,00-0038679,Tyrell Shavers,WR,6.0,Knee - ACL,PUP-R
+CAR,00-0041047,Chris Brazzell II,WR,7.0,Knee,IR
+CAR,00-0040644,Trevor Etienne,RB,4.0,Ankle,IR-R
+CHI,00-0037329,Brittain Brown,RB,4.0,Undisclosed,IR
+CHI,00-0037031,Nikola Kalinic,TE,4.0,Knee,IR
+CHI,00-0041170,Hayden Large,TE,5.0,Undisclosed,IR
+CHI,00-0041265,Squirrel White,WR,,Personal,Reserve-Ret
+CLE,00-0041087,Joe Royer,TE,4.0,Personal,NFI-R
+CLE,00-0040162,Dylan Sampson,RB,2.0,Knee,IR
+DAL,00-0035639,Parris Campbell,WR,,Undisclosed,Reserve-Ret
+DAL,00-0037563,Malik Davis,RB,2.0,Hip,IR
+DAL,00-0038735,Princeton Fant,TE,4.0,Knee - ACL + MCL,IR
+DAL,00-0040938,DJ Rogers,TE,5.0,Knee,IR
+DEN,00-0040240,Caleb Lohner,TE,5.0,Lower Body,IR-R
+DET,00-0041446,Kendrick Law,WR,5.0,Knee - ACL,IR
+DET,00-0037197,Isiah Pacheco,RB,4.0,Back,IR
+GB,00-0035700,Josh Jacobs,RB,4.0,Personal,Reserve-CEL
+GB,00-0039144,Luke Musgrave,TE,5.0,Neck,PUP-R
+GB,00-0040009,Savion Williams,WR,7.0,Ankle,IR-R
+GB,00-0039936,Thomas Yassmin,TE,6.0,Undisclosed,IR
+HOU,00-0038977,Tank Dell,WR,6.0,Knee - ACL + MCL,IR-R
+HOU,00-0040130,Jayden Higgins,WR,7.0,Knee - ACL,IR
+IND,00-0038394,Will Mallory,TE,4.0,Thumb,IR-R
+IND,00-0035045,D.J. Montgomery,WR,8.0,Abdomen,IR
+IND,00-0040853,Carson Towt,TE,5.0,Undisclosed,IR
+JAX,00-0041206,Alex Bullock,WR,,Undisclosed,Reserve-Ret
+KC,00-0040953,Jeff Caldwell,WR,7.0,Knee,IR
+KC,00-0040955,John Michael Gyllenborg,TE,5.0,Knee,IR
+KC,00-0040120,Jimmy Holiday,WR,8.0,Undisclosed,IR
+LAC,00-0040184,KeAndre Lambert-Smith,WR,5.0,Hamstring,IR
+LAC,00-0038614,Scott Matlock,FB,2.0,Undisclosed,IR-R
+LV,00-0039244,Chris Collier,RB,4.0,Undisclosed,IR
+LV,00-0041005,Corey Rucker,WR,8.0,Undisclosed,IR
+LV,00-0040488,Carter Runyon,TE,4.0,Undisclosed,IR-R
+LV,00-0038590,Justin Shorter,WR,7.0,Undisclosed,IR
+LV,00-0040581,Dont'e Thornton Jr.,WR,6.0,Undisclosed,IR
+MIA,00-0041161,Le'Veon Moss,RB,,Undisclosed,Reserve-Ret
+MIA,00-0037078,Cole Turner,TE,5.0,Undisclosed,IR
+MIN,00-0032918,C.J. Ham,FB,,Undisclosed,Reserve-Ret
+MIN,00-0039710,Jeshaun Jones,WR,6.0,Suspension,Reserve-Sus
+MIN,00-0037525,Jordan Mason,RB,2.0,Thumb,IR
+MIN,00-0030035,Adam Thielen,WR,,Undisclosed,Reserve-Ret
+MIN,00-0040509,Ben Yurosek,TE,3.0,Undisclosed,IR
+NE,00-0035676,A.J. Brown,WR,1.0,Ankle,IR
+NE,00-0038720,Julian Hill,TE,5.0,Knee,IR
+NE,00-0041323,Myles Montgomery,RB,4.0,Undisclosed,IR
+NE,00-0040570,Jeremiah Webb,WR,7.0,Arm,IR
+NO,00-0037276,Ty Chandler,RB,5.0,Knee,IR
+NO,00-0040244,Moliki Matavao,TE,4.0,Knee,IR
+NO,00-0039907,Ja'Lynn Polk,WR,,Undisclosed,Reserve-Ret
+NO,00-0039623,Mason Tipton,WR,6.0,Leg,PUP-R
+NO,00-0041029,Jordyn Tyson,WR,5.0,Hamstring,IR-R
+NYG,00-0037837,Calvin Austin III,WR,6.0,Knee,IR
+NYG,00-0035645,Gunner Olszewski,WR,7.0,Achilles,IR
+NYJ,00-0033375,Tim Patrick,WR,5.0,Groin,IR
+NYJ,00-0041239,Chip Trayanum,RB,5.0,Neck,IR
+PHI,00-0037086,Grant Calcaterra,TE,5.0,Back,IR-R
+PHI,00-0041483,Eli Stowers,TE,3.0,Hamstring,IR
+PHI,00-0039236,Johnny Wilson,WR,7.0,Knee,IR
+PIT,00-0039626,Cole Burgess,WR,7.0,Undisclosed,IR
+SEA,00-0038752,Jake Bobo,WR,7.0,Knee,IR
+SEA,00-0039165,Zach Charbonnet,RB,4.0,Knee - ACL,PUP-R
+SEA,00-0037156,Irvin Charles,WR,6.0,Undisclosed,IR-R
+SEA,00-0040649,Robbie Ouzts,FB,2.0,Neck,IR
+SF,00-0039363,Isaac Guerendo,RB,4.0,Pectoral,PUP-R
+SF,00-0034775,Christian Kirk,WR,7.0,Calf,IR-R
+SF,00-0039916,Ricky Pearsall,WR,9.0,Knee - PCL,IR
+SF,00-0041035,De'Zhaun Stribling,WR,3.0,Ankle,Out
+SF,00-0037112,Jake Tonges,TE,2.0,Knee - MCL,IR
+TB,00-0035359,David Sills,WR,7.0,Undisclosed,IR-R
+TEN,00-0040901,Jaren Kanak,TE,5.0,Pectoral,IR
+WAS,00-0033955,Jeremy McNichols,RB,4.0,Quadriceps,IR-R

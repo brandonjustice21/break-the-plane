@@ -1,0 +1,24 @@
+team,position,beneficiary_gsis_id,beneficiary_name,beneficiary_rank,out_name,out_rank,out_injury,out_status,n_contributors,target_share_bump,rush_share_bump
+ATL,WR,00-0036463,Chris Blair,5,Beaux Collins,6.0,Undisclosed,IR-R,1,0.0077,0.0
+BAL,WR,00-0039792,Devontez Walker,4,Ja'Kobi Lane,3.0,Wrist,IR,1,0.0146,0.0
+BUF,WR,00-0041443,Skyler Bell,5,Tyrell Shavers,6.0,Knee - ACL,PUP-R,1,0.0116,0.0
+CLE,RB,00-0040466,Raheim Sanders,3,Dylan Sampson,2.0,Knee,IR,1,0.012,0.0695
+DAL,RB,00-0038705,Emari Demercado,3,Malik Davis,2.0,Hip,IR,1,0.004,0.0747
+DAL,WR,00-0039062,Jonathan Mingo,5,Parris Campbell,,Undisclosed,Reserve-Ret,1,0.0095,0.0
+GB,WR,00-0038090,Skyy Moore,5,Savion Williams,7.0,Ankle,IR-R,1,0.0029,0.0
+HOU,WR,00-0038728,Jared Wayne,5,Tank Dell,6.0,Knee - ACL + MCL,IR-R,2,0.0296,0.0
+IND,WR,00-0032951,Laquon Treadwell,5,D.J. Montgomery,8.0,Abdomen,IR,1,0.0154,0.0
+LAC,WR,00-0038573,Derius Davis,6,KeAndre Lambert-Smith,5.0,Hamstring,IR,1,0.007,0.0
+LV,WR,00-0037093,Dareke Young,5,Dont'e Thornton Jr.,6.0,Undisclosed,IR,3,0.0094,0.0
+MIN,RB,00-0041104,Demond Claiborne,3,Jordan Mason,2.0,Thumb,IR,1,0.0012,0.0854
+MIN,TE,00-0040215,Gavin Bartholomew,4,Ben Yurosek,3.0,Undisclosed,IR,1,0.0103,0.0
+MIN,WR,00-0040506,Myles Price,5,Adam Thielen,,Undisclosed,Reserve-Ret,2,0.0121,0.0
+NE,WR,00-0037816,Romeo Doubs,2,A.J. Brown,1.0,Ankle,IR,2,0.0284,0.0
+NYG,WR,00-0031235,Odell Beckham Jr.,5,Gunner Olszewski,7.0,Achilles,IR,2,0.02,0.0
+NYJ,WR,00-0040582,Arian Smith,6,Tim Patrick,5.0,Groin,IR,1,0.0082,0.0
+PHI,TE,00-0038498,E.J. Jenkins,4,Eli Stowers,3.0,Hamstring,IR,2,0.024,0.0
+PHI,WR,00-0036980,Elijah Moore,5,Johnny Wilson,7.0,Knee,IR,1,0.0076,0.0
+SEA,WR,00-0040621,Montorie Foster Jr,5,Irvin Charles,6.0,Undisclosed,IR-R,2,0.0088,0.0
+SF,TE,00-0036887,Luke Farrell,3,Jake Tonges,2.0,Knee - MCL,IR,1,0.0285,0.0
+SF,WR,00-0032775,Demarcus Robinson,4,Ricky Pearsall,9.0,Knee - PCL,IR,3,0.0468,0.0
+TB,WR,00-0040237,Tez Johnson,5,David Sills,7.0,Undisclosed,IR-R,1,0.0145,0.0
