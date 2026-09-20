@@ -396,7 +396,7 @@ def build_live_game_lines(week, wk_fixtures, lines_by_fixture, sched_wk):
 # RECOMPUTE -- lambda_team -> pace_scalar -> bottom-up -> top-down -> blend
 # =====================================================================
 def recompute(week, constants, lam_static, slate_raw, profile, calib, rec_def, rush_def,
-              qb_influence_by_team, team_pace, sched_wk, live_lines, live_injuries):
+              qb_influence_by_team, team_pace, sched_wk, live_lines, live_injuries, qb_depth=None):
     intercept = constants["intercept"]
     w_implied = constants["w_implied"]
     w_trailing = constants["w_trailing"]
@@ -518,6 +518,51 @@ def recompute(week, constants, lam_static, slate_raw, profile, calib, rec_def, r
         log(f"NEW live injury zero-out (ESPN Out/IR, not yet in the known weekly list): "
             f"{', '.join(slate.loc[slate['is_sidelined_live_new'], 'full_name'])}")
 
+    # =================================================================
+    # Backup QBs who won't play this week: exclude from the board entirely.
+    #
+    # Unlike RB/WR/TE (which get a top-N cutoff at export time, so a
+    # bench player's near-zero trailing share naturally keeps them off
+    # the board), the QB pool is exported as "every QB with a nonzero
+    # p_final_blend" with no starter check (see 29_export_dashboard_
+    # cms_redesign.py's qb_pool). A healthy backup QB's OWN trailing
+    # history (final_rush_share etc., from whenever he last had real
+    # stats -- possibly a different team/season) can be nonzero even
+    # though he is buried on the current depth chart and has zero real
+    # chance of playing -- caught live Sept 20, 2026: Marcus Mariota
+    # (WAS QB2, behind a healthy Jayden Daniels) was showing a real
+    # 22% Anytime TD probability with no sportsbook offering a prop on
+    # him at all, since books don't price a player who isn't playing.
+    #
+    # Fix: cross-reference each team's QB depth chart (qb_depth_rank_
+    # 2026.csv, extracted from nflverse's depth_charts_2026.parquet) and
+    # keep only the lowest-ranked QB who ISN'T on the won't-play list
+    # (known + live) -- i.e. the presumed starter, or the next healthy
+    # QB down if the real starter is out. Every other QB for that team
+    # gets excluded from the dashboard entirely (see patch_dashboard).
+    # Conservative on purpose: a team missing from the depth-chart CSV,
+    # or where every listed QB is somehow marked out, gets NO exclusion
+    # applied rather than a guess.
+    # =================================================================
+    qb_exclude_ids = set()
+    if qb_depth is not None and len(qb_depth):
+        all_sidelined_ids = known_sidelined_ids | sidelined_now
+        for team, grp in qb_depth.groupby("team"):
+            grp = grp.sort_values("pos_rank")
+            starter_id = None
+            for _, r in grp.iterrows():
+                if r["gsis_id"] not in all_sidelined_ids:
+                    starter_id = r["gsis_id"]
+                    break
+            if starter_id is None:
+                continue
+            for _, r in grp.iterrows():
+                if r["gsis_id"] != starter_id:
+                    qb_exclude_ids.add(r["gsis_id"])
+        excluded_names = slate.loc[slate["gsis_id"].isin(qb_exclude_ids) & (slate["position"] == "QB"), "full_name"]
+        if len(excluded_names):
+            log(f"Excluding non-starting QBs from the board (depth-chart backups): {', '.join(excluded_names)}")
+
     # ---- QB influence (static per team for the week; already fitted) ----
     slate["qb_influence_on_rec_td"] = slate["team"].map(qb_influence_by_team).fillna(0.0)
 
@@ -570,7 +615,7 @@ def recompute(week, constants, lam_static, slate_raw, profile, calib, rec_def, r
     # a live-Out player never shows a live number above a floor, whatever the (now-zeroed) math implies
     slate.loc[slate["is_sidelined_live"], ["p_final_blend", "p_anytime_td_topdown", "p_anytime_td_bottomup"]] = 0.01
 
-    return slate, lam
+    return slate, lam, qb_exclude_ids
 
 
 def attach_live_odds(slate, td_odds):
@@ -592,12 +637,20 @@ def attach_live_odds(slate, td_odds):
 # =====================================================================
 # PATCH data.json (the file break_the_plane_v5_live.html fetches at runtime)
 # =====================================================================
-def patch_dashboard(dashboard, recomputed, lam):
+def patch_dashboard(dashboard, recomputed, lam, qb_exclude_ids=None):
+    qb_exclude_ids = qb_exclude_ids or set()
     by_id = recomputed.set_index("gsis_id")
     lam_by_team = lam.set_index("team")
     updated_players = []
+    n_excluded = 0
     for p in dashboard["players"]:
         pid = p["id"]
+        if pid in qb_exclude_ids:
+            # backup QB, not this week's presumed starter -- drop from the
+            # board entirely rather than showing a real number for someone
+            # with no realistic path to playing (see recompute()'s comment).
+            n_excluded += 1
+            continue
         if pid not in by_id.index:
             updated_players.append(p)  # not in the live-recomputed skill-position universe (shouldn't happen); keep as-is
             continue
@@ -620,6 +673,9 @@ def patch_dashboard(dashboard, recomputed, lam):
         elif "liveOut" in p:
             p["liveOut"] = False
         updated_players.append(p)
+
+    if n_excluded:
+        log(f"Dropped {n_excluded} non-starting QB(s) from the board this run.")
 
     # re-rank by the freshly blended probability, skill positions and QBs alike
     updated_players.sort(key=lambda p: p.get("p_final", 0.0), reverse=True)
@@ -678,6 +734,16 @@ def main():
         pd.read_csv(f"{OUT}/qb_influence_2026wk{week}.csv")
         .set_index("team")["qb_influence_on_rec_td"].to_dict())
 
+    # QB depth-chart ranks (extracted from nflverse's depth_charts_2026.parquet)
+    # -- used to exclude backup QBs who aren't this week's presumed starter
+    # from the board. Missing file is non-fatal: no QB exclusion is applied,
+    # same fail-safe posture as every other optional live-data source here.
+    try:
+        qb_depth = pd.read_csv(f"{OUT}/qb_depth_rank_2026.csv")
+    except FileNotFoundError:
+        log("No qb_depth_rank_2026.csv found -- skipping non-starting-QB exclusion this run.")
+        qb_depth = None
+
     sched_2026 = pd.read_csv(f"{ND}/schedules_2026.csv")
     sched_wk = sched_2026[(sched_2026["season"] == SEASON) & (sched_2026["week"] == week)].copy()
 
@@ -685,9 +751,9 @@ def main():
     wk_fixtures, lines_by_fixture, td_odds = fetch_opticodds(week, key, sched_wk)
     live_lines = build_live_game_lines(week, wk_fixtures, lines_by_fixture, sched_wk)
 
-    recomputed, lam = recompute(
+    recomputed, lam, qb_exclude_ids = recompute(
         week, constants, lam_static, slate_raw, profile, calib, rec_def, rush_def,
-        qb_influence_by_team, team_pace, sched_wk, live_lines, live_injuries)
+        qb_influence_by_team, team_pace, sched_wk, live_lines, live_injuries, qb_depth)
     recomputed = attach_live_odds(recomputed, td_odds)
 
     dashboard_path = f"{OUT}/dashboard_2026wk{week}.json"
@@ -695,7 +761,7 @@ def main():
     seed_path = data_json_path if os.path.exists(data_json_path) else dashboard_path
     dashboard = json.load(open(seed_path))
 
-    patched = sanitize_for_json(patch_dashboard(dashboard, recomputed, lam))
+    patched = sanitize_for_json(patch_dashboard(dashboard, recomputed, lam, qb_exclude_ids))
     with open(data_json_path, "w") as f:
         json.dump(patched, f)
     log(f"Wrote {data_json_path}: {len(patched['players'])} players, updated_at={patched['updated_at']}")
