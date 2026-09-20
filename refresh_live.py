@@ -150,10 +150,21 @@ def fetch_espn_injuries():
 # =====================================================================
 # LIVE FETCH 2 -- OpticOdds game lines + Anytime TD odds (needs ODDSJAM_KEY)
 # =====================================================================
-def fetch_opticodds(week, key):
+def fetch_opticodds(week, key, sched_wk):
     """Returns (fixtures, lines_by_game_id, td_odds_by_norm_name). Any piece
     that can't be confidently parsed comes back empty rather than guessed,
-    so callers fall back to the static/last-known value for that piece only."""
+    so callers fall back to the static/last-known value for that piece only.
+
+    Fixture matching is done by TEAM PAIR against our own known schedule
+    (sched_wk), not by trusting OpticOdds' own `season_week`/`season_year`
+    fixture fields -- a first live run (Sept 20, 2026, first time this ran
+    with a real key) came back with 100 active NFL fixtures leaguewide but
+    zero matching `season_week==2, season_year==2026`, meaning those field
+    names/values are not what this script originally assumed. Team-pair
+    matching against sched_wk (which we already trust -- it's the same
+    schedules_2026.csv the rest of the pipeline uses) sidesteps that
+    entirely: this week's 16 games are known in advance from OUR data,
+    we just need to find each one's fixture id in OpticOdds' feed."""
     empty = ([], {}, {})
     if not key:
         log("No ODDSJAM_KEY set -- skipping OpticOdds fetch (game lines + odds stay at their last-known values).")
@@ -171,9 +182,30 @@ def fetch_opticodds(week, key):
         return empty
 
     all_fixtures = fx.get("data", [])
-    wk_fixtures = [f for f in all_fixtures
-                   if str(f.get("season_week")) == str(week) and f.get("season_year") == SEASON]
-    log(f"OpticOdds active NFL fixtures: {len(all_fixtures)}; Week {week} {SEASON}: {len(wk_fixtures)}")
+    known_pairs = set(zip(sched_wk["home_team"], sched_wk["away_team"]))
+    wk_fixtures = []
+    for f in all_fixtures:
+        try:
+            home = f["home_competitors"][0]["abbreviation"]
+            away = f["away_competitors"][0]["abbreviation"]
+        except (KeyError, IndexError):
+            continue
+        if (home, away) in known_pairs:
+            wk_fixtures.append(f)
+    log(f"OpticOdds active NFL fixtures: {len(all_fixtures)}; matched to Week {week} {SEASON}'s "
+        f"{len(known_pairs)} known games by team pair: {len(wk_fixtures)}")
+    if not wk_fixtures and all_fixtures:
+        sample = all_fixtures[0]
+        sample_keys = sorted(sample.keys())
+        sample_teams = None
+        try:
+            sample_teams = (sample["home_competitors"][0]["abbreviation"],
+                             sample["away_competitors"][0]["abbreviation"])
+        except (KeyError, IndexError):
+            pass
+        log(f"DIAGNOSTIC (no team-pair match found): sample fixture keys={sample_keys}; "
+            f"sample fixture teams={sample_teams}; our known Week {week} pairs (first 5)="
+            f"{list(known_pairs)[:5]}")
     if not wk_fixtures:
         return empty
     fixture_ids = [f["id"] for f in wk_fixtures]
@@ -602,7 +634,7 @@ def main():
     sched_wk = sched_2026[(sched_2026["season"] == SEASON) & (sched_2026["week"] == week)].copy()
 
     live_injuries = fetch_espn_injuries()
-    wk_fixtures, lines_by_fixture, td_odds = fetch_opticodds(week, key)
+    wk_fixtures, lines_by_fixture, td_odds = fetch_opticodds(week, key, sched_wk)
     live_lines = build_live_game_lines(week, wk_fixtures, lines_by_fixture, sched_wk)
 
     recomputed, lam = recompute(
