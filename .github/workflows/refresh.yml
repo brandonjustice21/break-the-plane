@@ -50,10 +50,35 @@ jobs:
         run: |
           git config user.name "break-the-plane-bot"
           git config user.email "actions@users.noreply.github.com"
+
           if git diff --quiet -- data.json; then
             echo "No change in data.json this run -- nothing to commit."
-          else
+            exit 0
+          fi
+
+          # Stash the freshly computed file itself (not a git ref) so we can
+          # reapply it no matter how many times we have to resync below.
+          cp data.json /tmp/data.json.new
+
+          for attempt in 1 2 3 4 5; do
             git add data.json
             git commit -m "Hourly live refresh: $(date -u +'%Y-%m-%d %H:%M UTC')"
-            git push
-          fi
+
+            if git push; then
+              echo "Pushed successfully on attempt $attempt."
+              exit 0
+            fi
+
+            echo "Push rejected on attempt $attempt (someone else pushed to main in the meantime) -- resyncing and retrying..."
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/data.json.new data.json
+
+            if git diff --quiet -- data.json; then
+              echo "Latest main already has this exact data.json (someone else's run beat us to the same content) -- nothing left to push."
+              exit 0
+            fi
+          done
+
+          echo "Failed to push data.json after 5 attempts -- giving up this run; next hourly run will retry."
+          exit 1
