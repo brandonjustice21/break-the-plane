@@ -44,7 +44,7 @@ jobs:
           BTP_ND: ${{ github.workspace }}/data/nflverse
           BTP_OUT: ${{ github.workspace }}/data
           BTP_SITE: ${{ github.workspace }}
-        run: python3 refresh_live.py --week 2
+        run: python3 refresh_live.py --week 3
 
       - name: Commit data.json if changed
         run: |
