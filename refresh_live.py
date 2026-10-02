@@ -364,6 +364,110 @@ def fetch_opticodds(week, key, sched_wk):
     return wk_fixtures, lines_by_fixture, td_players
 
 
+def build_kickoff_maps(sched_wk):
+    """Per-team kickoff display string + sortable ms-epoch timestamp, same
+    format as script 29/37's fmt_kickoff -- needed here so a brand-new
+    player added by add_odds_only_players() (someone with no prior row in
+    dashboard["players"]) gets a real kickoff value instead of a blank one."""
+    def fmt(row):
+        try:
+            h, m = row["gametime"].split(":")
+            h = int(h)
+            ampm = "AM" if h < 12 else "PM"
+            h12 = h % 12
+            h12 = 12 if h12 == 0 else h12
+            mo, day = row["gameday"][5:].split("-")
+            wd = row["weekday"][:3]
+            return f"{wd} {int(mo)}/{int(day)} · {h12}:{m} {ampm} ET"
+        except Exception:
+            return row.get("weekday", "")
+
+    kickoff_by_team, kickoff_ts_by_team = {}, {}
+    dt = pd.to_datetime(sched_wk["gameday"].astype(str) + " " + sched_wk["gametime"].astype(str), errors="coerce")
+    for (_, g), d in zip(sched_wk.iterrows(), dt):
+        s = fmt(g)
+        ts = None if pd.isna(d) else int(d.timestamp() * 1000)
+        kickoff_by_team[g["home_team"]] = s
+        kickoff_by_team[g["away_team"]] = s
+        kickoff_ts_by_team[g["home_team"]] = ts
+        kickoff_ts_by_team[g["away_team"]] = ts
+    return kickoff_by_team, kickoff_ts_by_team
+
+
+def add_odds_only_players(updated_players, recomputed, td_odds, lam, kickoff_by_team, kickoff_ts_by_team):
+    """Add anyone OpticOdds is pricing for an Anytime TD market this hour who
+    ISN'T already on the board -- the fix for a game like a low-total PIT@CLE
+    showing only 1-2 players, because the weekly export's top-60 RB/WR/TE cut
+    (see 29_export_dashboard_cms_redesign.py's TOP_N_SKILL) is a GLOBAL
+    league-wide rank cut, not a per-game one. `recomputed` already carries
+    p_final_blend for the full ~500-player raw slate (not just the top 60),
+    and td_odds already carries the book-priced player set -- both are
+    already computed above in main(), so this just needs to union them in.
+
+    New entries are necessarily a lighter card than a normal weekly-export
+    row: def_rank/def_tier, rz_share/games_since_td/tds_in_last4, seasonProd,
+    scoreBreakdown, alignment, headshot, and rotowireUrl all come from
+    script 29/37's own data loads (player_stats_weekly, alignment CSVs,
+    RotoWire headshots/slugs), none of which this hourly script loads. Those
+    fields are left null here -- the front end already treats every one of
+    them as optional (see e.g. newsHtml(p)'s generic-link fallback, align's
+    None-when-no-slot_share case) -- and get filled in for real the next time
+    the full weekly pipeline (scripts 29/37) runs, since a player who's
+    getting real market action is a reasonable bet to clear a less-global
+    version of that cut too. This is deliberately a coverage/correctness
+    patch (nobody with a real market price shows as simply absent), not a
+    substitute for a full research card."""
+    existing_norm = {norm_name(p.get("name", "")) for p in updated_players}
+    by_norm = recomputed.drop_duplicates("name_norm").set_index("name_norm")
+    lam_by_team = lam.set_index("team")
+    n_added = 0
+    for k in td_odds:
+        if k in existing_norm:
+            continue
+        if k not in by_norm.index:
+            continue  # book is pricing a name our own slate can't match -- skip rather than guess
+        row = by_norm.loc[k]
+        d = td_odds[k]
+        team = row.get("team")
+        new_player = {
+            "id": row.get("gsis_id"), "name": row.get("full_name"), "pos": row.get("position"),
+            "team": team, "opp": row.get("opponent_team"),
+            "isHome": bool(row["is_home"]) if pd.notna(row.get("is_home")) else None,
+            "total": float(row["team_total_line"]) if pd.notna(row.get("team_total_line")) else None,
+            "rank": None,  # reassigned below once this is merged into the full list
+            "p_final": round(float(row["p_final_blend"]), 4),
+            "p_topdown": round(float(row["p_anytime_td_topdown"]), 4),
+            "p_bottomup": round(float(row["p_anytime_td_bottomup"]), 4),
+            "lambda_team": round(float(lam_by_team.loc[team, "lambda_team"]), 4) if team in lam_by_team.index else None,
+            "def_rank": None, "def_tier": None, "def_tds_allowed": None,
+            "games_since_td": None, "tds_in_last4": None, "rz_share": None,
+            "target_share": round(float(row["target_share_norm"]), 3) if pd.notna(row.get("target_share_norm")) else None,
+            "rush_share": round(float(row["rush_share_norm"]), 3) if pd.notna(row.get("rush_share_norm")) else None,
+            "p_option_c": None, "align": None, "alignSource": None, "alignBucket": None, "alignMatchup": None,
+            "rotowireUrl": None, "has_track_record": False, "confidence": row.get("confidence"),
+            "roof": row.get("roof") if pd.notna(row.get("roof")) else "TBD",
+            "divGame": bool(row.get("div_game")) if pd.notna(row.get("div_game")) else False,
+            "roleBump": None, "headshot": None,
+            "kickoff": kickoff_by_team.get(team), "kickoffTs": kickoff_ts_by_team.get(team),
+            "actual_any_td": None,
+            "has_market_odds": True,
+            "market_price": d.get("price"), "market_book": d.get("book"),
+            "market_consensus": d.get("consensus"), "market_n_books": d.get("n"),
+            "plus_ev_edge": round(float(row["p_final_blend"]) - d["consensus"], 4) if d.get("consensus") is not None else None,
+            "books": d.get("books", []),
+            "seasonProd": None, "scoreBreakdown": None,
+            "newsHeadline": None, "newsDate": None, "newsExcerpt": None,
+            "addedByLiveOdds": True,  # front end can use this to badge/label a lighter card if it wants to
+        }
+        updated_players.append(new_player)
+        n_added += 1
+    if n_added:
+        log(f"Added {n_added} player(s) to the board who weren't in the weekly export's top-60 cut "
+            f"but ARE being priced for an Anytime TD market right now: "
+            f"{', '.join(p['name'] for p in updated_players[-n_added:])}")
+    return updated_players
+
+
 def build_live_game_lines(week, wk_fixtures, lines_by_fixture, sched_wk):
     """Per-team live (total_line, spread_line, is_home) dict, falling back to the
     static schedules_2026.csv line for any game OpticOdds didn't give us."""
@@ -637,7 +741,8 @@ def attach_live_odds(slate, td_odds):
 # =====================================================================
 # PATCH data.json (the file break_the_plane_v5_live.html fetches at runtime)
 # =====================================================================
-def patch_dashboard(dashboard, recomputed, lam, qb_exclude_ids=None):
+def patch_dashboard(dashboard, recomputed, lam, qb_exclude_ids=None, td_odds=None,
+                     kickoff_by_team=None, kickoff_ts_by_team=None):
     qb_exclude_ids = qb_exclude_ids or set()
     by_id = recomputed.set_index("gsis_id")
     lam_by_team = lam.set_index("team")
@@ -676,6 +781,10 @@ def patch_dashboard(dashboard, recomputed, lam, qb_exclude_ids=None):
 
     if n_excluded:
         log(f"Dropped {n_excluded} non-starting QB(s) from the board this run.")
+
+    if td_odds:
+        updated_players = add_odds_only_players(
+            updated_players, recomputed, td_odds, lam, kickoff_by_team or {}, kickoff_ts_by_team or {})
 
     # re-rank by the freshly blended probability, skill positions and QBs alike
     updated_players.sort(key=lambda p: p.get("p_final", 0.0), reverse=True)
@@ -755,13 +864,16 @@ def main():
         week, constants, lam_static, slate_raw, profile, calib, rec_def, rush_def,
         qb_influence_by_team, team_pace, sched_wk, live_lines, live_injuries, qb_depth)
     recomputed = attach_live_odds(recomputed, td_odds)
+    kickoff_by_team, kickoff_ts_by_team = build_kickoff_maps(sched_wk)
 
     dashboard_path = f"{OUT}/dashboard_2026wk{week}.json"
     data_json_path = f"{SITE}/data.json"
     seed_path = data_json_path if os.path.exists(data_json_path) else dashboard_path
     dashboard = json.load(open(seed_path))
 
-    patched = sanitize_for_json(patch_dashboard(dashboard, recomputed, lam, qb_exclude_ids))
+    patched = sanitize_for_json(patch_dashboard(
+        dashboard, recomputed, lam, qb_exclude_ids,
+        td_odds=td_odds, kickoff_by_team=kickoff_by_team, kickoff_ts_by_team=kickoff_ts_by_team))
     with open(data_json_path, "w") as f:
         json.dump(patched, f)
     log(f"Wrote {data_json_path}: {len(patched['players'])} players, updated_at={patched['updated_at']}")
