@@ -1,0 +1,64 @@
+team,position,beneficiary_gsis_id,beneficiary_name,beneficiary_rank,out_name,out_rank,out_injury,out_status,n_contributors,target_share_bump,rush_share_bump
+ARI,RB,00-0041027,Jeremiyah Love,1.0,James Conner,4.0,Not specified,Reserve/IR,2,0.014487,0.089598
+ARI,TE,00-0037744,Trey McBride,1.0,Tip Reiman,4.0,Not specified,Reserve/IR,3,0.027922,0.0
+ATL,RB,00-0038542,Bijan Robinson,1.0,Trey Sermon,3.0,Not specified,Reserve/IR,1,0.007243,0.044799
+ATL,WR,00-0037238,Drake London,1.0,Beaux Collins,6.0,Not specified,Reserve/IR,1,0.009781,0.0
+BAL,RB,00-0032764,Derrick Henry,1.0,Adam Randall,4.0,Not specified,Reserve/IR,1,0.007243,0.044799
+BAL,WR,00-0039064,Zay Flowers,1.0,Ja'Kobi Lane,7.0,Not specified,Reserve/IR,1,0.00325,0.0
+BUF,WR,00-0035500,Greg Dortch,1.0,Tyrell Shavers,7.0,Not specified,Reserve/IR,1,0.009781,0.0
+CHI,RB,00-0036275,D'Andre Swift,1.0,Brittain Brown,4.0,Not specified,Reserve/IR,1,0.007243,0.044799
+CHI,TE,00-0040126,Colston Loveland,1.0,Nikola Kalinic,4.0,Not specified,Reserve/IR,2,0.025576,0.0
+CIN,WR,00-0036410,Tee Higgins,1.0,Andrei Iosivas,6.0,Thumb,Out,2,0.004832,0.0
+CLE,RB,00-0040784,Quinshon Judkins,1.0,Dylan Sampson,2.0,Not specified,Reserve/IR,1,0.009085,0.062838
+CLE,TE,00-0040663,Harold Fannin Jr.,1.0,Joe Royer,4.0,Not specified,Reserve/IR,1,0.012788,0.0
+CLE,WR,00-0041547,KC Concepcion,1.0,Tylan Wallace,4.0,Knee,Out,1,0.009781,0.0
+DAL,RB,00-0036997,Javonte Williams,1.0,Malik Davis,2.0,Hip,Out,1,0.009085,0.062838
+DAL,TE,00-0038041,Jake Ferguson,1.0,Princeton Fant,4.0,Not specified,Reserve/IR,2,0.025576,0.0
+DEN,RB,00-0036158,J.K. Dobbins,1.0,Jonah Coleman,4.0,Ankle,Out,1,0.00271,0.019911
+DEN,TE,00-0033881,Evan Engram,1.0,Caleb Lohner,5.0,Not specified,Reserve/IR,1,0.012788,0.0
+DET,RB,00-0039139,Jahmyr Gibbs,1.0,Isiah Pacheco,4.0,Not specified,Reserve/IR,1,0.007243,0.044799
+DET,WR,00-0036963,Amon-Ra St. Brown,1.0,Kendrick Law,6.0,Not specified,Reserve/IR,1,0.009781,0.0
+GB,TE,00-0038996,Tucker Kraft,1.0,Luke Musgrave,5.0,Not specified,Reserve/IR,2,0.025576,0.0
+GB,WR,00-0040667,Matthew Golden,1.0,Savion Williams,3.0,Not specified,Reserve/IR,2,0.015147,0.0
+HOU,RB,00-0035685,David Montgomery,1.0,British Brooks,4.0,Not specified,Reserve/IR,1,0.007243,0.044799
+HOU,WR,00-0038618,Xavier Hutchinson,1.0,Tank Dell,3.0,Not specified,Reserve/IR,2,0.019563,0.0
+IND,TE,00-0040128,Tyler Warren,1.0,Will Mallory,4.0,Not specified,Reserve/IR,2,0.025576,0.0
+IND,WR,00-0038997,Josh Downs,1.0,D.J. Montgomery,9.0,Not specified,Reserve/IR,2,0.016043,0.0
+LA,RB,00-0037840,Kyren Williams,1.0,Ronnie Rivers,3.0,Not specified,Reserve/IR,1,0.001,0.009612
+LA,TE,00-0033110,Tyler Higbee,1.0,Terrance Ferguson,5.0,Ankle,Out,1,0.018069,0.0
+LAC,RB,00-0040666,Omarion Hampton,1.0,Scott Matlock,2.0,Not specified,Reserve/IR,1,0.009085,0.062838
+LAC,TE,00-0040189,Oronde Gadsden II,1.0,David Njoku,4.0,Not specified,Reserve/IR,2,0.018883,0.0
+LAC,WR,00-0040727,Tre Harris,1.0,KeAndre Lambert-Smith,3.0,Not specified,Reserve/IR,2,0.012706,0.0
+LV,RB,00-0040122,Ashton Jeanty,1.0,Chris Collier,4.0,Not specified,Reserve/IR,1,0.007243,0.044799
+LV,TE,00-0039066,Michael Mayer,1.0,Carter Runyon,4.0,Not specified,Reserve/IR,1,0.012788,0.0
+LV,WR,00-0038563,Tre Tucker,1.0,Dont'e Thornton Jr.,7.0,Not specified,Reserve/IR,3,0.02535,0.0
+MIA,RB,00-0040198,Ollie Gordon II,2.0,De'Von Achane,3.0,Not specified,Reserve/IR,1,0.011375,0.077913
+MIA,TE,00-0037252,Greg Dulcich,1.0,Cole Turner,5.0,Not specified,Reserve/IR,1,0.012788,0.0
+MIA,WR,00-0039880,Malik Washington,1.0,Caleb Douglas,2.0,Ankle,Out,1,0.009648,0.0
+MIN,RB,00-0033293,Aaron Jones,1.0,Audric Estimé,,Thigh,Out,2,0.007243,0.069395
+MIN,TE,00-0035229,T.J. Hockenson,1.0,Ben Yurosek,3.0,Not specified,Reserve/IR,2,0.022384,0.0
+MIN,WR,00-0038994,Jordan Addison,1.0,Justin Jefferson,1.0,Ankle,Out,2,0.023491,0.0
+NE,RB,00-0036875,Rhamondre Stevenson,1.0,Myles Montgomery,4.0,Not specified,Reserve/IR,1,0.007243,0.044799
+NE,TE,00-0033090,Hunter Henry,1.0,Julian Hill,5.0,Not specified,Reserve/IR,1,0.012788,0.0
+NE,WR,00-0037816,Romeo Doubs,1.0,Jeremiah Webb,7.0,Not specified,Reserve/IR,2,0.013031,0.0
+NO,RB,00-0033906,Alvin Kamara,2.0,Ty Chandler,4.0,Not specified,Reserve/IR,2,0.014094,0.108672
+NO,TE,00-0036040,Juwan Johnson,1.0,Moliki Matavao,5.0,Not specified,Reserve/IR,1,0.012788,0.0
+NO,WR,00-0037239,Chris Olave,1.0,Brock Rechsteiner,,Not specified,Reserve/IR,3,0.029344,0.0
+NYG,WR,00-0039337,Malik Nabers,1.0,Calvin Austin III,4.0,Not specified,Reserve/IR,2,0.019563,0.0
+NYJ,RB,00-0036842,Kene Nwangwu,1.0,Breece Hall,1.0,Quadricep,Out,2,0.014597,0.147429
+NYJ,TE,00-0041032,Kenyon Sadiq,1.0,Mason Taylor,2.0,Thumb,Out,1,0.006437,0.0
+NYJ,WR,00-0037740,Garrett Wilson,1.0,Adonai Mitchell,2.0,Finger,Out,4,0.023675,0.0
+PHI,RB,00-0034844,Saquon Barkley,1.0,Tank Bigsby,3.0,Not specified,Reserve/IR,1,0.003303,0.053786
+PHI,TE,00-0038498,E.J. Jenkins,2.0,Eli Stowers,5.0,Hamstring,Out,3,0.037348,0.0
+PHI,WR,00-0037132,Britain Covey,2.0,DeVonta Smith,1.0,Hamstring,Out,3,0.033913,0.0
+PIT,RB,00-0037228,Jaylen Warren,1.0,Rico Dowdle,3.0,Toe,Out,1,0.004529,0.038205
+PIT,WR,00-0035640,DK Metcalf,1.0,Cole Burgess,7.0,Not specified,Reserve/IR,1,0.009781,0.0
+SEA,RB,00-0038797,Emanuel Wilson,1.0,Robbie Ouzts,2.0,Not specified,Reserve/IR,3,0.022382,0.166582
+SEA,WR,00-0038543,Jaxon Smith-Njigba,1.0,Jake Bobo,7.0,Not specified,Reserve/IR,2,0.019563,0.0
+SF,RB,00-0033280,Christian McCaffrey,1.0,Isaac Guerendo,3.0,Not specified,Reserve/IR,1,0.007243,0.044799
+SF,TE,00-0033288,George Kittle,1.0,Jake Tonges,4.0,Not specified,Reserve/IR,1,0.012788,0.0
+SF,WR,00-0031408,Mike Evans,1.0,Ricky Pearsall,3.0,Not specified,Reserve/IR,4,0.035914,0.0
+TB,WR,00-0040129,Emeka Egbuka,1.0,David Sills,6.0,Not specified,Reserve/IR,2,0.010462,0.0
+TEN,TE,00-0040584,Gunnar Helm,1.0,Jaren Kanak,5.0,Not specified,Reserve/IR,1,0.012788,0.0
+WAS,RB,00-0040242,Jacory Croskey-Merritt,1.0,Jeremy McNichols,5.0,Not specified,Reserve/IR,2,0.014447,0.083127
+WAS,WR,00-0031588,Stefon Diggs,1.0,Jaylin Lane,3.0,Not specified,Reserve/IR,1,0.001699,0.0

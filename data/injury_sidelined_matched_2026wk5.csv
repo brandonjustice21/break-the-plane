@@ -1,0 +1,104 @@
+team,gsis_id,name,pos_abb,injury,status
+CAR,00-0039342,Xavier Legette,WR,Knee,Out
+LAC,00-0041550,Brenen Thompson,WR,Quadricep,Out
+DEN,00-0041496,Jonah Coleman,RB,Ankle,Out
+NYJ,00-0041511,Omar Cooper Jr.,WR,Ankle,Out
+SEA,00-0041512,Jadarian Price,RB,Chest,Out
+MIA,00-0041523,Caleb Douglas,WR,Ankle,Out
+PHI,00-0041483,Eli Stowers,TE,Hamstring,Out
+DET,00-0041446,Kendrick Law,WR,Not specified,Reserve/IR
+NO,00-0041451,Brock Rechsteiner,WR,Not specified,Reserve/IR
+NYJ,00-0033375,Tim Patrick,WR,Groin,Out
+ARI,00-0033553,James Conner,RB,Not specified,Reserve/IR
+SF,00-0032775,Demarcus Robinson,WR,Ankle,Out
+CHI,00-0037329,Brittain Brown,RB,Not specified,Reserve/IR
+NO,00-0037276,Ty Chandler,RB,Not specified,Reserve/IR
+WAS,00-0037256,Rachaad White,RB,Shoulder,Out
+NYG,00-0037837,Calvin Austin III,WR,Not specified,Reserve/IR
+LAC,00-0038046,Charlie Kolar,TE,Forearm,Out
+IND,00-0037664,Alec Pierce,WR,Heel,Out
+MIN,00-0037525,Jordan Mason,RB,Not specified,Reserve/IR
+LA,00-0037557,Ronnie Rivers,RB,Not specified,Reserve/IR
+DAL,00-0037563,Malik Davis,RB,Hip,Out
+IND,00-0038394,Will Mallory,TE,Not specified,Reserve/IR
+NYJ,00-0038120,Breece Hall,RB,Quadricep,Out
+NE,00-0038720,Julian Hill,TE,Not specified,Reserve/IR
+DAL,00-0038735,Princeton Fant,TE,Not specified,Reserve/IR
+BUF,00-0038679,Tyrell Shavers,WR,Not specified,Reserve/IR
+LAC,00-0038614,Scott Matlock,RB,Not specified,Reserve/IR
+CIN,00-0038619,Andrei Iosivas,WR,Thumb,Out
+PHI,00-0038555,Tank Bigsby,RB,Not specified,Reserve/IR
+MIA,00-0039040,De'Von Achane,RB,Not specified,Reserve/IR
+HOU,00-0038977,Tank Dell,WR,Not specified,Reserve/IR
+SEA,00-0038752,Jake Bobo,WR,Not specified,Reserve/IR
+SF,00-0037112,Jake Tonges,TE,Not specified,Reserve/IR
+SEA,00-0037156,Irvin Charles,WR,Not specified,Reserve/IR
+DET,00-0037197,Isiah Pacheco,RB,Not specified,Reserve/IR
+CHI,00-0037031,Nikola Kalinic,TE,Not specified,Reserve/IR
+MIA,00-0037078,Cole Turner,TE,Not specified,Reserve/IR
+PHI,00-0037086,Grant Calcaterra,TE,Not specified,Reserve/IR
+NO,00-0036973,Travis Etienne,RB,Not specified,Reserve/IR
+ATL,00-0036984,Trey Sermon,RB,Not specified,Reserve/IR
+ARI,00-0037004,Hunter Long,TE,Not specified,Reserve/IR
+PHI,00-0036912,DeVonta Smith,WR,Hamstring,Out
+SF,00-0039363,Isaac Guerendo,RB,Not specified,Reserve/IR
+GB,00-0039144,Luke Musgrave,TE,Not specified,Reserve/IR
+GB,00-0039146,Jayden Reed,WR,Neck,Out
+SEA,00-0039165,Zach Charbonnet,RB,Knee,Out
+PHI,00-0039236,Johnny Wilson,WR,Not specified,Reserve/IR
+LV,00-0039244,Chris Collier,RB,Not specified,Reserve/IR
+HOU,00-0039603,British Brooks,RB,Not specified,Reserve/IR
+NO,00-0039623,Mason Tipton,WR,Not specified,Reserve/IR
+PIT,00-0039626,Cole Burgess,WR,Not specified,Reserve/IR
+MIN,00-0039373,Audric Estimé,RB,Thigh,Out
+CLE,00-0036630,Tylan Wallace,WR,Knee,Out
+TB,00-0039855,Jalen McMillan,WR,Not specified,Reserve/IR
+ARI,00-0039737,Tip Reiman,TE,Not specified,Reserve/IR
+ARI,00-0039921,Trey Benson,RB,Not specified,Reserve/IR
+GB,00-0039936,Thomas Yassmin,TE,Not specified,Reserve/IR
+GB,00-0040009,Savion Williams,WR,Not specified,Reserve/IR
+NYJ,00-0039890,Adonai Mitchell,WR,Finger,Out
+SF,00-0039916,Ricky Pearsall,WR,Not specified,Reserve/IR
+DEN,00-0040240,Caleb Lohner,TE,Not specified,Reserve/IR
+NO,00-0040244,Moliki Matavao,TE,Not specified,Reserve/IR
+LAC,00-0040184,KeAndre Lambert-Smith,WR,Not specified,Reserve/IR
+HOU,00-0040130,Jayden Higgins,WR,Not specified,Reserve/IR
+CLE,00-0040162,Dylan Sampson,RB,Not specified,Reserve/IR
+WAS,00-0040164,Jaylin Lane,WR,Not specified,Reserve/IR
+ATL,00-0040432,Beaux Collins,WR,Not specified,Reserve/IR
+MIN,00-0036322,Justin Jefferson,WR,Ankle,Out
+MIN,00-0036259,Jauan Jennings,WR,Not injury related - personal matter,Out
+PIT,00-0036139,Rico Dowdle,RB,Toe,Out
+LV,00-0040581,Dont'e Thornton Jr.,WR,Not specified,Reserve/IR
+NYJ,00-0040582,Arian Smith,WR,Not specified,Reserve/IR
+NE,00-0040570,Jeremiah Webb,WR,Not specified,Reserve/IR
+LV,00-0040488,Carter Runyon,TE,Not specified,Reserve/IR
+MIN,00-0040509,Ben Yurosek,TE,Not specified,Reserve/IR
+LV,00-0040729,Jack Bech,WR,Not specified,Reserve/IR
+SEA,00-0040649,Robbie Ouzts,RB,Not specified,Reserve/IR
+DAL,00-0040938,DJ Rogers,TE,Not specified,Reserve/IR
+BAL,00-0040888,Adam Randall,RB,Not specified,Reserve/IR
+TEN,00-0040901,Jaren Kanak,TE,Not specified,Reserve/IR
+IND,00-0040853,Carson Towt,TE,Not specified,Reserve/IR
+BAL,00-0040870,Ja'Kobi Lane,WR,Not specified,Reserve/IR
+NYJ,00-0040736,Mason Taylor,TE,Thumb,Out
+LA,00-0040737,Terrance Ferguson,TE,Ankle,Out
+PHI,00-0035662,Marquise Brown,WR,Ankle,Out
+NE,00-0035676,A.J. Brown,WR,Not specified,Reserve/IR
+NYG,00-0035645,Gunner Olszewski,WR,Not specified,Reserve/IR
+TB,00-0035359,David Sills,WR,Not specified,Reserve/IR
+MIN,00-0035249,Josh Oliver,TE,Not specified,Reserve/IR
+SF,00-0041035,De'Zhaun Stribling,WR,Ankle,Out
+LV,00-0041005,Corey Rucker,WR,Not specified,Reserve/IR
+NO,00-0041029,Jordyn Tyson,WR,Not specified,Reserve/IR
+CHI,00-0041170,Hayden Large,TE,Not specified,Reserve/IR
+CLE,00-0041087,Joe Royer,TE,Not specified,Reserve/IR
+CIN,00-0041069,Colbie Young,WR,Knee,Out
+NYJ,00-0041239,Chip Trayanum,RB,Not specified,Reserve/IR
+ARI,00-0041366,Jameson Geers,TE,Not specified,Reserve/IR
+NE,00-0041323,Myles Montgomery,RB,Not specified,Reserve/IR
+IND,00-0035045,D.J. Montgomery,WR,Not specified,Reserve/IR
+SF,00-0034775,Christian Kirk,WR,Not specified,Reserve/IR
+PHI,00-0034351,Dallas Goedert,TE,Knee,Out
+LAC,00-0033885,David Njoku,TE,Not specified,Reserve/IR
+WAS,00-0033955,Jeremy McNichols,RB,Not specified,Reserve/IR
