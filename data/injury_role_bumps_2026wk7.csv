@@ -1,0 +1,42 @@
+team,position,beneficiary_gsis_id,beneficiary_name,beneficiary_rank,out_name,out_rank,out_injury,out_status,n_contributors,target_share_bump,rush_share_bump
+ARI,RB,00-0037263,Tyler Allgeier,2.0,Jeremiyah Love,1.0,Ankle,Out,3,0.030029,0.304425
+ATL,RB,00-0036906,Khalil Herbert,3.0,Brian Robinson,2.0,Hamstring,Out,2,0.010714,0.104998
+ATL,WR,00-0041044,Zachariah Branch,4.0,Olamide Zaccheaus,3.0,Shoulder,Out,2,0.015645,0.0
+BAL,WR,00-0040075,LaJohntay Wester,5.0,Elijah Sarratt,6.0,Coach's Decision,Out,1,0.007548,0.0
+BUF,WR,00-0035500,Greg Dortch,5.0,Tyrell Shavers,7.0,Not specified,Reserve/IR,1,0.010558,0.0
+CAR,RB,00-0040644,Trevor Etienne,3.0,Jonathon Brooks,5.0,Not specified,Reserve/IR,2,0.005459,0.085133
+CAR,WR,00-0033589,David Moore,5.0,Chris Brazzell II,7.0,Not specified,Reserve/IR,2,0.018791,0.0
+CHI,RB,00-0039021,Roschon Johnson,3.0,Kyle Monangai,,Toe,Out,2,0.006842,0.109315
+CHI,WR,00-0040277,Jahdae Walker,5.0,Ray-Ray McCloud,6.0,Not specified,Reserve/IR,1,0.008841,0.0
+CIN,WR,00-0038839,Mitchell Tinsley,5.0,Andrei Iosivas,6.0,Not specified,Reserve/IR,1,0.009839,0.0
+DAL,WR,00-0039062,Jonathan Mingo,5.0,KaVontae Turpin,4.0,Ribs,Out,1,0.004974,0.0
+DEN,WR,00-0035406,Lil'Jordan Humphrey,5.0,Pat Bryant,6.0,Not specified,Reserve/IR,1,0.010889,0.0
+DET,WR,00-0031763,DeAndre Carter,5.0,Tom Kennedy,6.0,Knee - MCL,Reserve/IR,2,0.025381,0.0
+GB,WR,00-0040948,J. Michael Sturdivant,5.0,Jayden Reed,8.0,Not specified,Reserve/IR,2,0.022418,0.0
+HOU,RB,00-0040583,Woody Marks,2.0,David Montgomery,1.0,Groin,Out,2,0.0028,0.127464
+HOU,WR,00-0038618,Xavier Hutchinson,5.0,Jayden Higgins,7.0,Not specified,Reserve/IR,1,0.012231,0.0
+IND,TE,00-0038394,Will Mallory,2.0,Tyler Warren,1.0,Groin,Out,2,0.054745,0.0
+IND,WR,00-0041132,Deion Burks,5.0,Alec Pierce,7.0,Heel,Reserve/IR,3,0.029327,0.0
+KC,WR,00-0039894,Xavier Worthy,2.0,Rashee Rice,1.0,Hamstring,Out,4,0.057522,0.0
+LA,WR,00-0041399,CJ Daniels,5.0,Davante Adams,7.0,Hamstring,Reserve/IR,1,0.018326,0.0
+LAC,RB,00-0039391,Kimani Vidal,3.0,Alec Ingold,2.0,Shoulder,Reserve/IR,1,0.006799,0.0
+LAC,WR,00-0041550,Brenen Thompson,5.0,Sincere Brown,8.0,Not specified,Reserve/IR,1,0.009781,0.0
+LV,WR,00-0040894,Malik Benson,5.0,Jack Bech,7.0,Not specified,Reserve/IR,3,0.028583,0.0
+MIA,WR,00-0038728,Jared Wayne,6.0,Jalen Tolbert,5.0,Coach's Decision,Out,1,0.010087,0.0
+MIN,RB,00-0036425,DeeJay Dallas,4.0,Demond Claiborne,3.0,Coach's Decision,Out,1,0.002092,0.012667
+NE,RB,00-0040734,TreVeyon Henderson,2.0,Myles Montgomery,4.0,Not specified,Reserve/IR,2,0.011957,0.047392
+NO,WR,00-0038979,Cedric Tillman,5.0,Jordyn Tyson,6.0,Hamstring,Reserve/IR,2,0.019141,0.0
+NYG,TE,00-0040225,Thomas Fidone II,4.0,Theo Johnson,2.0,Neck,Out,1,0.011994,0.0
+NYG,WR,00-0038938,Jalin Hyatt,5.0,Gunner Olszewski,8.0,Not specified,Reserve/IR,3,0.026049,0.0
+NYJ,RB,00-0039794,Braelon Allen,2.0,Breece Hall,1.0,Quadriceps,Out,4,0.026574,0.277931
+NYJ,WR,00-0039451,Isaiah Williams,5.0,Arian Smith,7.0,Not specified,Reserve/IR,1,0.005172,0.0
+PHI,WR,00-0040867,Makai Lemon,3.0,DeVonta Smith,1.0,Hamstring,Out,3,0.06053,0.0
+PIT,RB,00-0038409,Lew Nichols III,5.0,Eli Heidenreich,,Coach's Decision,Out,1,0.007243,0.044799
+PIT,WR,00-0041397,Kaden Wetjen,4.0,Roman Wilson,8.0,Not specified,Reserve/IR,4,0.03888,0.0
+SEA,RB,00-0039299,George Holani,3.0,Zach Charbonnet,2.0,Knee - ACL,Out,3,0.02658,0.235323
+SEA,WR,00-0037156,Irvin Charles,5.0,Jake Bobo,6.0,Not specified,Reserve/IR,1,0.003738,0.0
+SF,WR,00-0034775,Christian Kirk,3.0,Mike Evans,1.0,Achilles,Out,5,0.084246,0.0
+TB,WR,00-0033921,Chris Godwin Jr.,2.0,Emeka Egbuka,1.0,Concussion,Out,2,0.040531,0.0
+TEN,RB,00-0037594,Julius Chestnut,3.0,Tyjae Spears,2.0,Knee,Out,2,0.008421,0.049116
+TEN,WR,00-0040705,Chimere Dike,5.0,Calvin Ridley,4.0,Hip,Out,1,0.007438,0.0
+WAS,WR,00-0039355,Luke McCaffrey,5.0,Terry McLaurin,6.0,Knee,Out,2,0.024525,0.0
