@@ -117,6 +117,18 @@ def get_json(url, timeout=20, headers=None):
 # =====================================================================
 # LIVE FETCH 1 -- ESPN injuries (no key required)
 # =====================================================================
+def _espn_athlete_id(athlete):
+    """ESPN's injuries feed dropped athlete['id'] (found Oct 25 2026, which silently turned the live
+    Out/IR zero-out layer into a no-op) -- the id now only appears in the player-card link href."""
+    if athlete.get("id"):
+        return str(athlete["id"])
+    for l in athlete.get("links") or []:
+        m = re.search(r"/id/(\d+)", l.get("href", ""))
+        if m:
+            return m.group(1)
+    return None
+
+
 def fetch_espn_injuries():
     """Returns a DataFrame: espn_id, team, name, status, body_part, updated -- for
     every player leaguewide currently listed on ESPN's injury report."""
@@ -134,7 +146,7 @@ def fetch_espn_injuries():
             athlete = inj.get("athlete", {}) or {}
             pos = (athlete.get("position") or {}).get("abbreviation")
             rows.append({
-                "espn_id": str(athlete.get("id")) if athlete.get("id") else None,
+                "espn_id": _espn_athlete_id(athlete),
                 "team": team_abbr,
                 "name": athlete.get("displayName"),
                 "pos_abb": pos,
@@ -364,6 +376,70 @@ def fetch_opticodds(week, key, sched_wk):
     return wk_fixtures, lines_by_fixture, td_players
 
 
+def fetch_game_states(week):
+    """Per-team game state + anytime-TD scorers, from ESPN's public scoreboard/summary (no key).
+    Added Oct 25 2026: lets finished games settle HIT/MISS on the board and flags live games, instead of
+    every game of the week looking like an open opportunity until the next weekly rebuild.
+    Returns (state_by_team, scorers_by_team) -- state in {"final","live","scheduled"}; scorers are ESPN ids
+    of players with a rushing or receiving TD so far (passing/defensive TDs don't count for this market)."""
+    fix = {"LAR": "LA", "WSH": "WAS"}
+    state, scorers = {}, {}
+    try:
+        sb = get_json(f"https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week={week}&dates={SEASON}",
+                      headers={"User-Agent": "curl/8.5.0", "Accept-Encoding": "identity"})
+    except Exception as e:
+        log(f"WARNING: ESPN scoreboard fetch failed ({e}); no game-state/settlement update this run.")
+        return state, scorers
+    for ev in sb.get("events", []):
+        comp = ev["competitions"][0]
+        name = comp["status"]["type"]["name"]
+        st = "final" if name == "STATUS_FINAL" else ("live" if name in ("STATUS_IN_PROGRESS", "STATUS_HALFTIME", "STATUS_END_PERIOD") else "scheduled")
+        teams = [fix.get(c["team"]["abbreviation"], c["team"]["abbreviation"]) for c in comp["competitors"]]
+        for t in teams:
+            state[t] = st
+            scorers.setdefault(t, set())
+        if st == "scheduled":
+            continue
+        try:
+            summ = get_json(f"https://site.api.espn.com/apis/site/v2/sports/football/nfl/summary?event={ev['id']}",
+                            headers={"User-Agent": "curl/8.5.0", "Accept-Encoding": "identity"})
+        except Exception as e:
+            log(f"WARNING: ESPN summary failed for event {ev['id']} ({e}).")
+            continue
+        for tb in summ.get("boxscore", {}).get("players", []):
+            t = fix.get(tb["team"]["abbreviation"], tb["team"]["abbreviation"])
+            for cat in tb.get("statistics", []):
+                if cat.get("name") not in ("rushing", "receiving") or "TD" not in cat.get("labels", []):
+                    continue
+                i = cat["labels"].index("TD")
+                for a in cat.get("athletes", []):
+                    try:
+                        if int(a["stats"][i]) > 0:
+                            scorers.setdefault(t, set()).add(str(a["athlete"]["id"]))
+                    except (ValueError, IndexError, KeyError):
+                        pass
+    return state, scorers
+
+
+def apply_game_states(players, recomputed, state, scorers):
+    by_id = recomputed.drop_duplicates("gsis_id").set_index("gsis_id")
+    for p in players:
+        st = state.get(p.get("team"))
+        if not st:
+            continue
+        p["gameStatus"] = st
+        espn = by_id["espn_id"].get(p["id"]) if "espn_id" in by_id.columns else None
+        espn = str(int(float(espn))) if espn is not None and pd.notna(espn) else None
+        hit = espn in scorers.get(p["team"], set()) if espn else False
+        if st == "final":
+            p["actual_any_td"] = bool(hit)
+        elif st == "live":
+            p["actual_any_td"] = True if hit else None
+        else:
+            p["actual_any_td"] = None
+    return players
+
+
 def build_kickoff_maps(sched_wk):
     """Per-team kickoff display string + sortable ms-epoch timestamp, same
     format as script 29/37's fmt_kickoff -- needed here so a brand-new
@@ -508,9 +584,23 @@ def recompute(week, constants, lam_static, slate_raw, profile, calib, rec_def, r
 
     # ---- team-level lambda, using LIVE implied_total + STATIC trailing history ----
     lam = lam_static.copy()
-    lam["implied_total"] = lam["team"].map(lambda t: live_lines[t]["total_line"] / 2 +
-                                            (live_lines[t]["spread_line"] / 2 if live_lines[t]["is_home"]
-                                             else -live_lines[t]["spread_line"] / 2))
+    # NaN-safe (fixed Oct 25 2026): a live game total with a missing spread -- or no live/static line at
+    # all -- used to turn lambda_team into NaN for the whole team, which silently zeroed the top-down
+    # half of the blend (p_topdown=0, lambda_team=null on every player) and shrank every p_final by ~45%.
+    # Spread missing -> treat as pick'em; total missing -> fall back to the weekly file's implied_total.
+    static_implied = lam_static.set_index("team")["implied_total"].to_dict() if "implied_total" in lam_static.columns else {}
+
+    def _implied_total(t):
+        ll = live_lines.get(t)
+        tot = ll["total_line"] if ll else np.nan
+        spr = ll["spread_line"] if ll else np.nan
+        if pd.isna(tot):
+            return static_implied.get(t, np.nan)
+        if pd.isna(spr):
+            spr = 0.0
+        return tot / 2 + (spr / 2 if ll["is_home"] else -spr / 2)
+
+    lam["implied_total"] = lam["team"].map(_implied_total)
     lam["implied_tds"] = lam["implied_total"] / pts_to_td_ratio
     lam["lambda_team"] = np.maximum(0.1, intercept + w_implied * lam["implied_tds"] + w_trailing * lam["trailing_off_tds"])
     lam["lambda_rush"] = lam["lambda_team"] * lam["rush_share"]
@@ -742,7 +832,7 @@ def attach_live_odds(slate, td_odds):
 # PATCH data.json (the file break_the_plane_v5_live.html fetches at runtime)
 # =====================================================================
 def patch_dashboard(dashboard, recomputed, lam, qb_exclude_ids=None, td_odds=None,
-                     kickoff_by_team=None, kickoff_ts_by_team=None):
+                     kickoff_by_team=None, kickoff_ts_by_team=None, game_state=None, scorers=None):
     qb_exclude_ids = qb_exclude_ids or set()
     by_id = recomputed.set_index("gsis_id")
     lam_by_team = lam.set_index("team")
@@ -786,6 +876,9 @@ def patch_dashboard(dashboard, recomputed, lam, qb_exclude_ids=None, td_odds=Non
         updated_players = add_odds_only_players(
             updated_players, recomputed, td_odds, lam, kickoff_by_team or {}, kickoff_ts_by_team or {})
 
+    if game_state:
+        updated_players = apply_game_states(updated_players, recomputed, game_state, scorers or {})
+
     # re-rank by the freshly blended probability, skill positions and QBs alike
     updated_players.sort(key=lambda p: p.get("p_final", 0.0), reverse=True)
     for i, p in enumerate(updated_players, start=1):
@@ -827,7 +920,7 @@ def main():
     key = os.environ.get("ODDSJAM_KEY")
 
     constants = json.load(open(f"{OUT}/model_constants_2026.json"))
-    lam_static = pd.read_csv(f"{OUT}/lambda_2026wk{week}.csv")[["team", "trailing_off_tds", "rush_share"]]
+    lam_static = pd.read_csv(f"{OUT}/lambda_2026wk{week}.csv")[["team", "trailing_off_tds", "rush_share", "implied_total"]]
     slate_raw = pd.read_parquet(f"{OUT}/slate_2026wk{week}_players_raw.parquet")
     profile = pd.read_csv(f"{OUT}/player_efficiency_profile.csv")
     calib = pd.read_csv(f"{OUT}/models_calibration.csv").set_index("stat")
@@ -871,9 +964,11 @@ def main():
     seed_path = data_json_path if os.path.exists(data_json_path) else dashboard_path
     dashboard = json.load(open(seed_path))
 
+    game_state, scorers = fetch_game_states(week)
     patched = sanitize_for_json(patch_dashboard(
         dashboard, recomputed, lam, qb_exclude_ids,
-        td_odds=td_odds, kickoff_by_team=kickoff_by_team, kickoff_ts_by_team=kickoff_ts_by_team))
+        td_odds=td_odds, kickoff_by_team=kickoff_by_team, kickoff_ts_by_team=kickoff_ts_by_team,
+        game_state=game_state, scorers=scorers))
     with open(data_json_path, "w") as f:
         json.dump(patched, f)
     log(f"Wrote {data_json_path}: {len(patched['players'])} players, updated_at={patched['updated_at']}")
