@@ -1,0 +1,29 @@
+team,position,beneficiary_gsis_id,beneficiary_name,beneficiary_rank,out_name,out_rank,out_injury,out_status,n_contributors,target_share_bump,rush_share_bump
+ARI,WR,00-0036331,Devin Duvernay,5.0,Jalen Brooks,6.0,Wrist,Reserve/IR,1,0.010353,0.0
+ATL,WR,00-0036463,Chris Blair,5.0,Beaux Collins,6.0,Not specified,Reserve/IR,1,0.00657,0.0
+BUF,WR,00-0035500,Greg Dortch,5.0,Tyrell Shavers,7.0,Knee - ACL,Out,1,0.010558,0.0
+CAR,WR,00-0033589,David Moore,5.0,Chris Brazzell II,7.0,Not specified,Reserve/IR,2,0.018791,0.0
+CHI,WR,00-0040277,Jahdae Walker,5.0,Ray-Ray McCloud,6.0,Not specified,Reserve/IR,1,0.008841,0.0
+CIN,WR,00-0041069,Colbie Young,5.0,Andrei Iosivas,6.0,Thumb,Reserve/IR,1,0.009839,0.0
+DEN,WR,00-0035406,Lil'Jordan Humphrey,5.0,Pat Bryant,6.0,Not specified,Reserve/IR,1,0.010889,0.0
+DET,WR,00-0031763,DeAndre Carter,5.0,Tom Kennedy,6.0,Knee - MCL,Reserve/IR,2,0.025381,0.0
+GB,WR,00-0040948,J. Michael Sturdivant,5.0,Jayden Reed,8.0,Not specified,Reserve/IR,2,0.022418,0.0
+HOU,WR,00-0038608,Kayshon Boutte,5.0,Jayden Higgins,6.0,Not specified,Reserve/IR,2,0.024344,0.0
+IND,TE,00-0033439,Pharaoh Brown,5.0,Carson Towt,6.0,Not specified,Reserve/IR,1,0.012788,0.0
+IND,WR,00-0041132,Deion Burks,5.0,Alec Pierce,7.0,Heel,Reserve/IR,2,0.026162,0.0
+KC,WR,00-0038519,Nikko Remigio,5.0,Tyquan Thornton,7.0,Not specified,Reserve/IR,3,0.032488,0.0
+LA,WR,00-0041399,CJ Daniels,5.0,Davante Adams,7.0,Hamstring,Reserve/IR,1,0.018326,0.0
+LAC,RB,00-0039391,Kimani Vidal,3.0,Alec Ingold,2.0,Not specified,Reserve/IR,1,0.006799,0.0
+LAC,WR,00-0041550,Brenen Thompson,5.0,Sincere Brown,8.0,Not specified,Reserve/IR,1,0.009781,0.0
+LV,WR,00-0040894,Malik Benson,5.0,Jack Bech,7.0,Forearm,Reserve/IR,2,0.020961,0.0
+NE,RB,00-0040734,TreVeyon Henderson,2.0,Myles Montgomery,4.0,Not specified,Reserve/IR,2,0.011957,0.047392
+NO,WR,00-0038979,Cedric Tillman,7.0,Jordyn Tyson,5.0,Not specified,Reserve/IR,2,0.019141,0.0
+NYG,WR,00-0038938,Jalin Hyatt,8.0,Gunner Olszewski,7.0,Not specified,Reserve/IR,3,0.026049,0.0
+NYJ,RB,00-0034959,Andrew Beck,5.0,Dominic Richardson,6.0,Not specified,Reserve/IR,2,0.014487,0.089598
+NYJ,WR,00-0039451,Isaiah Williams,5.0,Arian Smith,7.0,Not specified,Reserve/IR,1,0.005172,0.0
+PHI,WR,00-0035662,Marquise Brown,5.0,Johnny Wilson,8.0,Not specified,Reserve/IR,1,0.009781,0.0
+SEA,RB,00-0039299,George Holani,3.0,Jadarian Price,6.0,Chest,Reserve/IR,2,0.017157,0.141432
+SEA,WR,00-0037156,Irvin Charles,5.0,Jake Bobo,6.0,Not specified,Reserve/IR,1,0.003738,0.0
+SF,WR,00-0034775,Christian Kirk,5.0,Ricky Pearsall,9.0,Not specified,Reserve/IR,3,0.041651,0.0
+TB,WR,00-0035359,David Sills,5.0,Jalen McMillan,7.0,Not specified,Reserve/IR,1,0.010634,0.0
+WAS,WR,00-0039355,Luke McCaffrey,5.0,Terry McLaurin,7.0,Knee,Reserve/IR,2,0.024525,0.0
